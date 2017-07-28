@@ -1,2 +1,2 @@
-# sldp_display
+# sldp-display
 Display items for SLDP paper
