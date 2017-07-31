@@ -12,6 +12,7 @@ me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/2.vary_h2v/compiled_results/'
 outname = me+'/out/mainfig.biaspower.raw.pdf'
 
+# set aesthetics
 tickprops = {
         'direction':'out',
         'length':2,
@@ -23,8 +24,7 @@ powererrorbarprops = {
         'markersize':1}
 labelfontsize=6
 
-desc='maf5'
-refpanel='KG3.wim9nm'
+# set pretty text
 estimands = {
         'mu':'$\mu$',
         'r_f':'$r_f$',
@@ -35,6 +35,10 @@ weights = {
         'Winv_ahat_h':'non-trivial weights',
         'Winv_ahat_I':'trivial weights'
         }
+
+# set parameters
+desc='maf5'
+refpanel='KG3.wim9nm'
 
 ## set up figure
 fig = plt.figure(figsize=(5,2.5))
@@ -53,20 +57,17 @@ ax1.set_ylabel(r'Estimated '+estimands[estimand], fontsize=labelfontsize)
 
 ## create power plot for part b
 print('making power plot')
-m='r_f'
-hue, (r1,w1), (r2,w2) = ('Weight scheme',
-            ('KG3.wim9nm','Winv_ahat_h'),('KG3.wim9nm','Winv_ahat_I'))
-
+estimand='r_f'
 biaspower.power_plot(ax2,
         params.sldp+'/2.vary_h2v/compiled_results/',
         desc, 'Winv_ahat_h', refpanel,
-        'r_f', '{:.2f}',
+        estimand, '{:.2f}',
         label=weights['Winv_ahat_h'],
         c='b', labelfontsize=labelfontsize, **powererrorbarprops)
 biaspower.power_plot(ax2,
         params.sldp+'/2.vary_h2v/compiled_results/',
         desc, 'Winv_ahat_I', refpanel,
-        'r_f', '{:.2f}',
+        estimand, '{:.2f}',
         label=weights['Winv_ahat_I'],
         c='r', labelfontsize=labelfontsize, **powererrorbarprops)
 ax2.axis((-0.005, 0.055, 0, 1.05))
@@ -80,7 +81,7 @@ ax2.legend(loc='upper left', fontsize=5, markerscale=2, borderpad=0.1,
 sns.despine()
 gs.tight_layout(fig)
 
-print(m, ': saving figure')
+print('saving figure')
 fs.makedir_for_file(outname)
 plt.savefig(outname)
 plt.close()

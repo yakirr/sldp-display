@@ -20,6 +20,7 @@ tickprops = {
 powererrorbarprops = {
         'c':'b',
         'linewidth':1}
+labelfontsize=6
 
 desc='maf5'
 weights='Winv_ahat_h'
@@ -36,6 +37,7 @@ biaspower.power_plot(ax1,
         params.sldp+'/4.vary_N/compiled_results/',
         desc, weights, refpanel,
         'N', '{:.0f}',
+        labelfontsize=labelfontsize,
         **powererrorbarprops)
 ax1.axis((0, 50000, 0, 1))
 ax1.set_xlabel('Sample size', fontsize=7)
@@ -46,6 +48,7 @@ biaspower.power_plot(ax2,
         params.sldp+'/3.vary_h2g/compiled_results/',
         desc, weights, refpanel,
         'h2g', '{:.2f}',
+        labelfontsize=labelfontsize,
         **powererrorbarprops)
 ax2.axis((0, 0.6, 0, 1))
 ax2.set_xlabel('$h^2_g$', fontsize=7)
