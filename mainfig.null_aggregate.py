@@ -9,10 +9,9 @@ from statutils import vis, sig
 import seaborn as sns
 from plot import params
 
-sldp = '/groups/price/yakir/sldp/'
 me = os.path.dirname(os.path.abspath(__file__))
-indir = sldp+'/1.null_calib_a9/compiled_results'
-outname = me+'/out/mainfig.null_aggregate.png'
+indir = params.sldp+'/1.null_calib_a9/compiled_results'
+outname = me+'/out/mainfig.null_aggregate.raw.png'
 
 weights='Winv_ahat_h'
 

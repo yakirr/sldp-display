@@ -10,13 +10,13 @@ from statutils import vis, sig
 import seaborn as sns
 from plot import params
 
-sldp = '/groups/price/yakir/sldp/'
 me = os.path.dirname(os.path.abspath(__file__))
-indir = sldp+'/1.null_calib_a9/compiled_results'
-outname = me+'/out/suppfig.null_perannot.png'
+indir = params.sldp+'/1.null_calib_a9/compiled_results'
+outname = me+'/out/suppfig.null_perannot.raw.pdf'
 
 weights='Winv_ahat_h'
 
+fontsize=7
 tickprops = {
         'direction':'out',
         'length':2,
@@ -25,7 +25,7 @@ tickprops = {
         'labelsize':6}
 qqprops = {
         's':1.5,
-        'fontsize':7,
+        'fontsize':fontsize,
         'linewidth':0}
 
 def process(results):
@@ -43,60 +43,50 @@ gs = gridspec.GridSpec(1,2)
 ax1 = plt.subplot(gs[0,0])
 ax2 = plt.subplot(gs[0,1])
 
-## create qqplot for part a
-# get data and write to file
+## get data
 print('creating part a')
 sim = 'no_enrichment_3pcsaffy'
 fname = '{}/{}.{}_{}.all'.format(
     indir, sim, 'maf5', weights)
 print(fname)
 processed = process(pd.read_csv(fname, sep='\t'))
-processed.to_csv('{}/nullperannot.a.data.tsv'.format(indir), sep='\t')
+mafres = pd.read_csv(params.sldp+'/5.mafonly_a9/compiled_results/nobase_Winv_ahat_h.all',
+        sep='\t').rename(columns={'sf_z':'maf_z'})
+processed = pd.merge(processed, mafres[['annot','maf_z']], left_index=True, right_on='annot',
+        how='left')
+processed.to_csv('{}/nullperannot.data.tsv'.format(indir), sep='\t')
 print(sig.simes(processed.simes))
-# make figure
+
+## create qqplot for part a
 vis.qqplot(processed.simes, errorbars=False, ax=ax1, **qqprops)
 # make tick labels at integer increments
 ax1.set_xticks(list(set(range(-5,10)) & set(ax1.get_xticks().astype(int))))
 ax1.set_yticks(list(set(range(-5,10)) & set(ax1.get_yticks().astype(int))))
 ax1.tick_params(**tickprops)
 
-# create qqplot for part b
-# get nobase data and write to file
-print('creating part b')
-sim = 'minor1_signed10_3pcsaffy'
-fname = '{}/{}.{}_{}.all'.format(
-    indir, sim, 'nobase', weights)
-print(fname)
-processed = process(pd.read_csv(fname, sep='\t'))
-processed.to_csv('{}/nullperannot.b.nobase.data.tsv'.format(indir), sep='\t')
-print(sig.simes(processed.simes))
-# make figure
-vis.qqplot(processed.simes, errorbars=False, c='r', label='no covariates', ax=ax2, **qqprops)
-# get maf5 data and write to file
-print('creating part b')
-sim = 'minor1_signed10_3pcsaffy'
-fname = '{}/{}.{}_{}.all'.format(
-    indir, sim, 'maf5', weights)
-print(fname)
-processed = process(pd.read_csv(fname, sep='\t'))
-processed.to_csv('{}/nullperannot.b.maf5.data.tsv'.format(indir), sep='\t')
-print(sig.simes(processed.simes))
-# make figure
-vis.qqplot(processed.simes, errorbars=False, c='b', label='5 MAF bins', ax=ax2, **qqprops)
-# make tick labels at integer increments
-ax2.set_xticks(list(set(range(-5,10)) & set(ax2.get_xticks().astype(int))))
-ax2.set_yticks(list(set(range(-5,10)) & set(ax2.get_yticks().astype(int))))
+## create scatter plot for part b
+# get data
+x = np.abs(processed.maf_z); y = processed.avgchi2
+# scatter
+ax2.scatter(x, y, s=1.5, linewidth=0)
+# add trendline
+ax2.plot(np.unique(x), np.poly1d(np.polyfit(x, y, 1))(np.unique(x)),
+        c='gray', linewidth=0.8, dashes=[2,2])
+r2 = np.corrcoef(processed.maf_z**2, processed.avgchi2)[0,1]**2
+ax2.text(3, 0.82, '$r^2$: {:.2g}'.format(r2),
+        fontsize=6, color='b')
+
+ax2.set_xlabel(r'$|z|$, minor-allele-only trait', fontsize=fontsize)
+ax2.set_ylabel(r'avg $\chi^2$', fontsize=fontsize)
 ax2.tick_params(**tickprops)
-# legend
-ax2.legend(loc='upper left', fontsize=5, markerscale=2, borderpad=0.1,
-        labelspacing=0.2, columnspacing=0.2)
-ax2.tick_params(**tickprops)
+print(r2)
+
 
 # finishing touches and save
 sns.despine()
-gs.tight_layout(fig)
+plt.tight_layout()
 
 print('saving figure')
 fs.makedir_for_file(outname)
 # plt.show()
-plt.savefig(outname, dpi=300); plt.close()
+plt.savefig(outname); plt.close()

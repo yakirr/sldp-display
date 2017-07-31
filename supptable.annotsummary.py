@@ -1,11 +1,11 @@
 from __future__ import print_function, division
 import os
 import pandas as pd
+from plot import params
 
-sldp = '/groups/price/yakir/sldp/'
 me = os.path.dirname(os.path.abspath(__file__))
-infile = sldp + '0.annotsummary/annotsummary.tsv'
-outfile = me+'/out/supptable.annotsummary.tex'
+infile = params.sldp + '0.annotsummary/annotsummary.tsv'
+outfile = me+'/out/supptable.annotsummary.raw.tex'
 
 # read in data
 annotsummary = pd.read_csv(infile, sep='\t', index_col=0)
