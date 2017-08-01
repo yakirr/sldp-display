@@ -5,16 +5,9 @@ import matplotlib.ticker as ticker
 import matplotlib.gridspec as gridspec
 import pandas as pd
 import numpy as np
-import info, params
+import info
 
-tickprops = {
-        'direction':'out',
-        'length':2,
-        'width':0.8,
-        'pad':4,
-        'labelsize':6}
 results_overview_props = {
-        'fontsize':7,
         'linewidth':0}
 
 # convert long annot names to short annot names
@@ -65,10 +58,7 @@ def init(all_results, fdr_results):
     return results
 
 # single volcano plot
-def volcano(results, pheno, fontsize, ax=None, **kwargs):
-    if ax is None:
-        ax = plt.gca()
-
+def volcano(ax, results, pheno, fontsize):
     # prepare data
     myresults = results[results.pheno == pheno].copy()
     myresults['logp'] = -np.log10(myresults.sf_p)
@@ -87,7 +77,7 @@ def volcano(results, pheno, fontsize, ax=None, **kwargs):
     # plot and set text labels
     ax.scatter(myresults.r_f, myresults.logp,
             color=myresults.color, s=myresults.markersize,
-            **kwargs)
+            **results_overview_props)
     ax.set_xlabel(r'$\hat r_f$', fontsize=fontsize)
     ax.set_ylabel(r'$-\log_{10}(p)$', fontsize=fontsize)
     ax.set_title(info.phenotypes[pheno], fontsize=fontsize+1)
@@ -98,41 +88,3 @@ def volcano(results, pheno, fontsize, ax=None, **kwargs):
     ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%0.2f'))
     ax.set_xlim(xmin, xmax)
     ax.set_yticks(list(set(range(-5,10)) & set(ax.get_yticks().astype(int))))
-
-    # finish up
-    ax.tick_params(**tickprops)
-    plt.tight_layout()
-
-def multi_volcano(results, phenos, nrows, ncols, figsize,
-        fontsize='medium', **kwargs):
-    # set up figure
-    fig = plt.figure(figsize=figsize)
-    gs = gridspec.GridSpec(nrows,ncols)
-
-    # make plot for each phenotype
-    for ax, pheno in zip(gs, phenos):
-        print(pheno)
-        volcano(results, pheno, ax=plt.subplot(ax), **results_overview_props)
-
-    # finish up
-    sns.despine()
-    gs.tight_layout(fig)
-
-# single ordered scatter plot
-def ordered_scatter(results, pheno):
-    myresults = results[results.pheno == pheno].copy()
-    myresults['logp'] = np.sign(myresults.sf_z)*(-np.log10(myresults.sf_p))
-    myresults['markersize'] = 5
-    myresults.loc[myresults.passed, 'markersize'] = 30
-
-    for c in myresults.color.unique():
-        medz = np.median(myresults[myresults.color == c].sf_z)
-        myresults.loc[myresults.color == c, 'medz'] = medz
-
-    myresults.sort_values(['medz', 'logp', 'bigexp'],
-            ascending=[True, True, True],
-            inplace=True)
-    plt.scatter(np.arange(len(myresults)), myresults.logp,
-            color=myresults.color, s=myresults.markersize,
-            clip_on=False)
-    plt.title(info.phenotypes[pheno])

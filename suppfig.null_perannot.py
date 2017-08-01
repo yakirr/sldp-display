@@ -14,19 +14,14 @@ me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/1.null_calib_a9/compiled_results'
 outname = me+'/out/suppfig.null_perannot.raw.pdf'
 
-weights='Winv_ahat_h'
-
-fontsize=7
-tickprops = {
-        'direction':'out',
-        'length':2,
-        'width':0.8,
-        'pad':4,
-        'labelsize':6}
+# set aesthetics
 qqprops = {
         's':1.5,
-        'fontsize':fontsize,
+        'fontsize':params.labelfontsize,
         'linewidth':0}
+
+# set params
+weights='Winv_ahat_h'
 
 def process(results):
     processed = pd.DataFrame(columns=['annot']).set_index('annot')
@@ -62,7 +57,8 @@ vis.qqplot(processed.simes, errorbars=False, ax=ax1, **qqprops)
 # make tick labels at integer increments
 ax1.set_xticks(list(set(range(-5,10)) & set(ax1.get_xticks().astype(int))))
 ax1.set_yticks(list(set(range(-5,10)) & set(ax1.get_yticks().astype(int))))
-ax1.tick_params(**tickprops)
+ax1.tick_params(**params.tickprops)
+
 
 ## create scatter plot for part b
 # get data
@@ -74,11 +70,11 @@ ax2.plot(np.unique(x), np.poly1d(np.polyfit(x, y, 1))(np.unique(x)),
         c='gray', linewidth=0.8, dashes=[2,2])
 r2 = np.corrcoef(processed.maf_z**2, processed.avgchi2)[0,1]**2
 ax2.text(3, 0.82, '$r^2$: {:.2g}'.format(r2),
-        fontsize=6, color='b')
+        fontsize=params.labelfontsize, color='b')
 
-ax2.set_xlabel(r'$|z|$, minor-allele-only trait', fontsize=fontsize)
-ax2.set_ylabel(r'avg $\chi^2$', fontsize=fontsize)
-ax2.tick_params(**tickprops)
+ax2.set_xlabel(r'$|z|$, minor-allele-only trait', fontsize=params.labelfontsize)
+ax2.set_ylabel(r'avg $\chi^2$', fontsize=params.labelfontsize)
+ax2.tick_params(**params.tickprops)
 print(r2)
 
 

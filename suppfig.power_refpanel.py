@@ -12,15 +12,8 @@ me = os.path.dirname(os.path.abspath(__file__))
 outname = me+'/out/suppfig.power_refpanel.pdf'
 
 # set aesthetics
-tickprops = {
-        'direction':'out',
-        'length':2,
-        'width':0.8,
-        'pad':4,
-        'labelsize':6}
 powererrorbarprops = {
         'linewidth':1}
-labelfontsize=6
 
 # set pretty text
 refpanels = {
@@ -46,16 +39,16 @@ biaspower.power_plot(ax1,
         desc, weights, 'KG3.wim9nm',
         estimand, '{:.2f}',
         label=refpanels['KG3.wim9nm'],
-        c='b', labelfontsize=labelfontsize, **powererrorbarprops)
+        c='b', labelfontsize=params.labelfontsize, **powererrorbarprops)
 biaspower.power_plot(ax1,
         params.sldp+'/2.vary_h2v/compiled_results/',
         desc, weights, 'GERAimp.wim9nm.ref500',
         estimand, '{:.2f}',
         label=refpanels['GERAimp.wim9nm.ref500'],
-        c='g', labelfontsize=labelfontsize, **powererrorbarprops)
+        c='g', labelfontsize=params.labelfontsize, **powererrorbarprops)
 ax1.axis((-0.005, 0.055, 0, 1.05))
-ax1.set_xlabel(r'True $r_f$', fontsize=labelfontsize)
-ax1.tick_params(**tickprops)
+ax1.set_xlabel(r'True $r_f$', fontsize=params.labelfontsize)
+ax1.tick_params(**params.tickprops)
 ax1.legend(loc='upper left', fontsize=5, markerscale=2, borderpad=0.1,
         labelspacing=0.2, columnspacing=0.2)
 

@@ -11,17 +11,12 @@ from plot import params, biaspower
 me = os.path.dirname(os.path.abspath(__file__))
 outname = me+'/out/suppfig.power_N_h2g.raw.pdf'
 
-tickprops = {
-        'direction':'out',
-        'length':2,
-        'width':0.8,
-        'pad':4,
-        'labelsize':6}
+# set aesthetics
 powererrorbarprops = {
         'c':'b',
         'linewidth':1}
-labelfontsize=6
 
+# set params
 desc='maf5'
 weights='Winv_ahat_h'
 refpanel='KG3.wim9nm'
@@ -37,22 +32,22 @@ biaspower.power_plot(ax1,
         params.sldp+'/4.vary_N/compiled_results/',
         desc, weights, refpanel,
         'N', '{:.0f}',
-        labelfontsize=labelfontsize,
+        labelfontsize=params.labelfontsize,
         **powererrorbarprops)
 ax1.axis((0, 50000, 0, 1))
 ax1.set_xlabel('Sample size', fontsize=7)
-ax1.tick_params(**tickprops)
+ax1.tick_params(**params.tickprops)
 
 ## power as a function of h2g
 biaspower.power_plot(ax2,
         params.sldp+'/3.vary_h2g/compiled_results/',
         desc, weights, refpanel,
         'h2g', '{:.2f}',
-        labelfontsize=labelfontsize,
+        labelfontsize=params.labelfontsize,
         **powererrorbarprops)
 ax2.axis((0, 0.6, 0, 1))
 ax2.set_xlabel('$h^2_g$', fontsize=7)
-ax2.tick_params(**tickprops)
+ax2.tick_params(**params.tickprops)
 
 
 # finishing touches and save

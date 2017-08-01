@@ -13,18 +13,14 @@ me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/1.null_calib_a9/compiled_results'
 outname = me+'/out/mainfig.null_aggregate.raw.png'
 
-weights='Winv_ahat_h'
-
-tickprops = {
-        'direction':'out',
-        'length':2,
-        'width':0.8,
-        'pad':4,
-        'labelsize':6}
+# set aesthetics
 qqprops = {
         's':1.5,
-        'fontsize':7,
+        'fontsize':params.labelfontsize,
         'linewidth':0}
+
+# set params
+weights='Winv_ahat_h'
 
 ## set up figure
 fig = plt.figure(figsize=(6,2))
@@ -43,11 +39,11 @@ results = pd.read_csv(fname, sep='\t')
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
 vis.qqplot(results.sf_p, errorbars=False, ax=ax1, **qqprops)
 ax1.text(2.8, -0.5, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
-        fontsize=6, color='b')
+        fontsize=params.labelfontsize, color='b')
 # make tick labels at integer increments
 ax1.set_xticks(list(set(range(-5,10)) & set(ax1.get_xticks().astype(int))))
 ax1.set_yticks(list(set(range(-5,10)) & set(ax1.get_yticks().astype(int))))
-ax1.tick_params(**tickprops)
+ax1.tick_params(**params.tickprops)
 
 ## create qqplot for part b
 print('creating part b')
@@ -59,11 +55,11 @@ results = pd.read_csv(fname, sep='\t', nrows=427*3)
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
 vis.qqplot(results.sf_p, errorbars=False, ax=ax2, **qqprops)
 ax2.text(1.5, -0.25, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
-        fontsize=6, color='b')
+        fontsize=params.labelfontsize, color='b')
 # make tick labels at integer increments
 ax2.set_xticks(list(set(range(-5,10)) & set(ax2.get_xticks().astype(int))))
 ax2.set_yticks(list(set(range(-5,10)) & set(ax2.get_yticks().astype(int))))
-ax2.tick_params(**tickprops)
+ax2.tick_params(**params.tickprops)
 
 # # create qqplot for part c
 print('creating part c')
@@ -75,7 +71,7 @@ results = pd.read_csv(fname, sep='\t')
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
 vis.qqplot(results.sf_p, errorbars=False, ax=ax3, c='r', label='no covariates', **qqprops)
 ax3.text(2.8, 0.2, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
-        fontsize=6, color='r')
+        fontsize=params.labelfontsize, color='r')
 
 fname = '{}/{}.{}_{}.all'.format(
     indir, sim, 'maf5', weights)
@@ -84,11 +80,11 @@ results = pd.read_csv(fname, sep='\t')
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
 vis.qqplot(results.sf_p, errorbars=False, ax=ax3, label='5 MAF bins',  **qqprops)
 ax3.text(2.8, -0.5, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
-        fontsize=6, color='b')
+        fontsize=params.labelfontsize, color='b')
 # add legend and format ticks
 ax3.legend(loc='upper left', fontsize=5, markerscale=2, borderpad=0.1,
         labelspacing=0.2, columnspacing=0.2)
-ax3.tick_params(**tickprops)
+ax3.tick_params(**params.tickprops)
 # make tick labels at integer increments
 ax2.set_xticks(list(set(range(-5,10)) & set(ax2.get_xticks().astype(int))))
 ax2.set_yticks(list(set(range(-5,10)) & set(ax2.get_yticks().astype(int))))

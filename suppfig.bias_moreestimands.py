@@ -10,16 +10,9 @@ from plot import params, biaspower; reload(biaspower)
 
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/2.vary_h2v/compiled_results/'
-outname = me+'/out/suppfig.bias_morestimands.raw.pdf'
+outname = me+'/out/suppfig.bias_moreestimands.raw.pdf'
 
 # set aesthetics
-tickprops = {
-        'direction':'out',
-        'length':2,
-        'width':0.8,
-        'pad':4,
-        'labelsize':6}
-labelfontsize=6
 
 # set pretty text
 estimands = {
@@ -47,9 +40,9 @@ print('making bias plot')
 for ax, (e, name) in zip([ax1,ax2,ax3,ax4], estimands.items()):
     print(e, name)
     biaspower.bias_plot(ax, indir, desc, weights, refpanel, e)
-    ax.tick_params(**tickprops)
-    ax.set_xlabel(r'True '+name, fontsize=labelfontsize)
-    ax.set_ylabel(r'Estimated '+name, fontsize=labelfontsize)
+    ax.tick_params(**params.tickprops)
+    ax.set_xlabel(r'True '+name, fontsize=params.labelfontsize)
+    ax.set_ylabel(r'Estimated '+name, fontsize=params.labelfontsize)
 
 
 # finishing touches and save
