@@ -31,6 +31,8 @@ annots.loc[annots.experiment.str.contains('CTCF') |
 annots.loc[annots.experiment.str.contains('POL2') |
         annots.experiment.str.contains('TBP') |
         annots.experiment.str.contains('TAF1'), 'bigexp'] = 'POL2/TBP/TAF1'
+annots.loc[annots.experiment.str.contains('ELF1SC631')] = 'ELF1'
+
 annots['tissue'] = 'non-blood'
 annots.loc[annots.cell_line.str.contains('GM') |
         annots.cell_line.str.contains('K562') |

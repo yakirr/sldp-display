@@ -2,6 +2,7 @@ from __future__ import print_function, division
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import matplotlib.patches as mpatches
 import matplotlib.gridspec as gridspec
 import pandas as pd
 import numpy as np
@@ -9,6 +10,7 @@ import info
 
 results_overview_props = {
         'linewidth':0}
+nonsig_color = (0.5, 0.5, 0.5, 0.4)
 
 # convert long annot names to short annot names
 def format_annot_names(df):
@@ -24,7 +26,7 @@ def get_color(annots, colorby='bigexp', apply_to=None):
     colors = sns.hls_palette(
             n_colors=len(annots.loc[apply_to, colorby].unique()),
             )
-    colordict = {a:(0.5, 0.5, 0.5, 0.4) for a in annots.loc[~apply_to, colorby].unique()}
+    colordict = {a:nonsig_color for a in annots.loc[~apply_to, colorby].unique()}
     colordict.update(dict(zip(
         annots.loc[apply_to, colorby].unique(),
         [c+(0.8,) for c in colors])))
@@ -62,8 +64,15 @@ def volcano(ax, results, pheno, fontsize):
     # prepare data
     myresults = results[results.pheno == pheno].copy()
     myresults['logp'] = -np.log10(myresults.sf_p)
-    myresults['markersize'] = 5
     myresults.loc[myresults.passed, 'markersize'] = 15
+    myresults.loc[~myresults.passed, 'markersize'] = 5
+
+    # gray out any TF with no passing annotations
+    myresults['graymask'] = ~myresults.passed
+    for be in myresults[myresults.passed].bigexp.unique():
+        myresults.loc[myresults.bigexp == be, 'graymask'] = False
+    myresults.loc[myresults.graymask, 'color'] = \
+            myresults.loc[myresults.graymask, 'color'].apply(lambda x: nonsig_color)
 
     # sort so that TFs with fewer experiments that passed will get plotted on top
     counts = pd.DataFrame(
@@ -72,13 +81,21 @@ def volcano(ax, results, pheno, fontsize):
     myresults = pd.merge(myresults,
             counts,
             left_on='bigexp', right_index=True, how='left').sort_values(
-            'count', ascending=False)
+            ['graymask','count'], ascending=[False,False])
 
-    # plot and set text labels
+    # figure out where to draw FDR threshold
+    high = myresults[myresults.passed].logp.min()
+    low = myresults[~myresults.passed].logp.max()
+    thresh = (high + low)/2
+
+    # plot and create FDR line
     ax.scatter(myresults.r_f, myresults.logp,
             color=myresults.color, s=myresults.markersize,
             **results_overview_props)
-    ax.set_xlabel(r'$\hat r_f$', fontsize=fontsize)
+    ax.axhline(y=thresh, color='gray', linestyle='--', linewidth=0.5, alpha=0.8)
+
+    # set labels
+    ax.set_xlabel(r'Estimated $r_f$', fontsize=fontsize)
     ax.set_ylabel(r'$-\log_{10}(p)$', fontsize=fontsize)
     ax.set_title(info.phenotypes[pheno], fontsize=fontsize+1)
 
@@ -88,3 +105,15 @@ def volcano(ax, results, pheno, fontsize):
     ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%0.2f'))
     ax.set_xlim(xmin, xmax)
     ax.set_yticks(list(set(range(-5,10)) & set(ax.get_yticks().astype(int))))
+    ax.set_ylim(-0.5, ax.get_ylim()[1])
+
+# NOTE: this function assumes that init has been called already
+def legend_contents():
+    patches = []
+    for be in info.annots.bigexp.unique():
+        c = info.annots[info.annots.bigexp == be].color.unique()[0]
+        if c != nonsig_color:
+            patches.append(mpatches.Patch(color=c, label=be))
+    # patches.append(mpatches.Patch(color=nonsig_color, label='No sig. results'))
+
+    return patches

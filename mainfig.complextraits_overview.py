@@ -31,6 +31,13 @@ for cell, pheno in zip(gs, phenos):
     results_overview.volcano(ax, results, pheno, params.labelfontsize)
     ax.tick_params(**params.tickprops)
 
+# add legend in bottom right
+ax = plt.subplot(gs[1,2])
+patches = results_overview.legend_contents()
+ax.set_axis_off()
+ax.legend(handles=patches, fontsize=6, markerscale=2, borderpad=0.1,
+    labelspacing=0.4, columnspacing=0.2, loc='upper left')
+
 # finish up
 sns.despine()
 gs.tight_layout(fig)
