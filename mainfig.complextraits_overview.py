@@ -8,7 +8,7 @@ import pyutils.fs as fs
 from plot import params, results_overview; reload(results_overview)
 
 me = os.path.dirname(os.path.abspath(__file__))
-indir = params.sldp+'/9.p7_a9_witheffectsize/compiled_results/'
+indir = params.sldp+'/9.p7_a9/compiled_results/'
 outname = me+'/out/mainfig.complextraits_overview.raw.pdf'
 
 # set parameters
@@ -33,7 +33,7 @@ for cell, pheno in zip(gs, phenos):
 
 # add legend in bottom right
 ax = plt.subplot(gs[1,2])
-patches = results_overview.legend_contents()
+patches = results_overview.legend_contents('genegroup')
 ax.set_axis_off()
 ax.legend(handles=patches, fontsize=6, markerscale=2, borderpad=0.1,
     labelspacing=0.4, columnspacing=0.2, loc='upper left')
