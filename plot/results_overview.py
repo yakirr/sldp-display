@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 import info; reload(info)
 
-results_overview_props = {
+volcanoprops = {
         'linewidth':0}
 nonsig_color = (0.5, 0.5, 0.5, 0.4)
 
@@ -92,7 +92,7 @@ def volcano(ax, results, pheno, fontsize):
     # plot and create FDR line
     ax.scatter(myresults.r_f, myresults.logp,
             color=myresults.color, s=myresults.markersize,
-            **results_overview_props)
+            **volcanoprops)
     ax.axhline(y=thresh, color='gray', linestyle='--', linewidth=0.5, alpha=0.8)
 
     # set labels
@@ -141,86 +141,95 @@ def summary_table(results, pheno):
 
 def segmented_bar(ax, passed, phenos, extra_mask, extra_color, title, fontsize,
         unmarked_color='b'):
+    # filter to correct set of results
     mask = [p in phenos for p in passed.pheno]
     myresults = passed[mask].copy()
+    # add the right order onto the annotation descriptions and sort
     myresults.desc = pd.Categorical(myresults.desc,
             info.category_order, ordered=True)
     myresults.sort_values(['desc', 'gene'], ascending=[True, True], inplace=True)
+    # print basic info
     print(pd.DataFrame(myresults.gene.value_counts()).sort_index())
     print(len(myresults), 'total results')
+
+    # make bar chart
     for i,(_, row) in enumerate(myresults.iterrows()):
         ax.barh(0, 1, 1, color=row.color, left=i, linewidth=0.2, edgecolor='white')
         if row[extra_mask]:
-            ax.barh(1.1, 1, 0.05, color=extra_color, left=i, linewidth=0)
+            ax.barh(1.1, 1, 0.08, color=extra_color, left=i, linewidth=0)
         else:
-            ax.barh(1.1, 1, 0.05, color=unmarked_color, left=i, linewidth=0)
+            ax.barh(1.1, 1, 0.08, color=unmarked_color, left=i, linewidth=0)
     ax.set_ylim(0,1.2)
     ax.set_xlim(0, len(myresults))
+
+    # make ticks really small and erase axes
     ax.tick_params(
         length=0.5,
         pad=0.5,
         labelsize=0.5)
     ax.axis('off')
+
+    # set title
     ax.set_title(title, fontsize=fontsize)
 
-######### things below this line are unused ##########
-def plot_with_corr(results, pheno):
-    myresults = results[
-            (results.pheno == pheno) & results.passed & (results.sf_z**2>9)].set_index('annot')
-    sig = myresults.index.unique()
-    corr = pd.read_csv(info.sldp+'/6.annotcorr_a9/results/all.corr', sep='\t', index_col=0)
-    corr.index = corr.index.str.split(',').str.get(0)
-    corr.columns = corr.columns.str.split(',').str.get(0)
-    corr = corr.loc[sig][sig]
+# ######### things below this line are unused ##########
+# def plot_with_corr(results, pheno):
+#     myresults = results[
+#             (results.pheno == pheno) & results.passed & (results.sf_z**2>9)].set_index('annot')
+#     sig = myresults.index.unique()
+#     corr = pd.read_csv(info.sldp+'/6.annotcorr_a9/results/all.corr', sep='\t', index_col=0)
+#     corr.index = corr.index.str.split(',').str.get(0)
+#     corr.columns = corr.columns.str.split(',').str.get(0)
+#     corr = corr.loc[sig][sig]
 
-    Y = sch.linkage(corr.values, method='centroid') # if the above lines aren't working
-    Z = sch.dendrogram(Y, orientation='right', no_plot=True)
-    ind = corr.index.values[Z['leaves']]
+#     Y = sch.linkage(corr.values, method='centroid') # if the above lines aren't working
+#     Z = sch.dendrogram(Y, orientation='right', no_plot=True)
+#     ind = corr.index.values[Z['leaves']]
 
-    corr = corr.loc[ind][ind]
-    myresults = myresults.loc[ind]
+#     corr = corr.loc[ind][ind]
+#     myresults = myresults.loc[ind]
 
-    fig = plt.figure(figsize=(6,6))
-    gs = gridspec.GridSpec(4,4)
-    ax1 = plt.subplot(gs[0:3,0:3])
-    ax2 = plt.subplot(gs[3,0:3])
+#     fig = plt.figure(figsize=(6,6))
+#     gs = gridspec.GridSpec(4,4)
+#     ax1 = plt.subplot(gs[0:3,0:3])
+#     ax2 = plt.subplot(gs[3,0:3])
 
-    print(corr.shape)
-    sns.heatmap(corr, square=True, xticklabels=False, yticklabels=1,
-            ax=ax1, cbar=False)
-    # ax2.scatter(range(len(myresults)), -np.log10(myresults.sf_p))
-    ax2.plot(-np.log10(myresults.sf_p))
-    ax2.set_xlim(-1, len(myresults))
-    sns.despine()
-    gs.tight_layout(fig)
-    plt.show()
+#     print(corr.shape)
+#     sns.heatmap(corr, square=True, xticklabels=False, yticklabels=1,
+#             ax=ax1, cbar=False)
+#     # ax2.scatter(range(len(myresults)), -np.log10(myresults.sf_p))
+#     ax2.plot(-np.log10(myresults.sf_p))
+#     ax2.set_xlim(-1, len(myresults))
+#     sns.despine()
+#     gs.tight_layout(fig)
+#     plt.show()
 
-def heatmap(results):
-    myresults = results[results.passed & (results.sf_p <= 1e-3)].copy()
-    myresults['logp'] = -np.log10(myresults.sf_p)
-    tab = myresults.pivot(index='annot', columns='pheno', values='logp').fillna(0)
+# def heatmap(results):
+#     myresults = results[results.passed & (results.sf_p <= 1e-3)].copy()
+#     myresults['logp'] = -np.log10(myresults.sf_p)
+#     tab = myresults.pivot(index='annot', columns='pheno', values='logp').fillna(0)
 
-    sig = tab.index.unique()
-    corr = pd.read_csv(info.sldp+'/6.annotcorr_a9/results/all.corr', sep='\t', index_col=0)
-    corr.index = corr.index.str.split(',').str.get(0)
-    corr.columns = corr.columns.str.split(',').str.get(0)
-    corr = corr.loc[sig][sig]
+#     sig = tab.index.unique()
+#     corr = pd.read_csv(info.sldp+'/6.annotcorr_a9/results/all.corr', sep='\t', index_col=0)
+#     corr.index = corr.index.str.split(',').str.get(0)
+#     corr.columns = corr.columns.str.split(',').str.get(0)
+#     corr = corr.loc[sig][sig]
 
-    Y = sch.linkage(corr.values, method='centroid') # if the above lines aren't working
-    Z = sch.dendrogram(Y, orientation='right', no_plot=True)
-    ind = corr.index.values[Z['leaves']]
+#     Y = sch.linkage(corr.values, method='centroid') # if the above lines aren't working
+#     Z = sch.dendrogram(Y, orientation='right', no_plot=True)
+#     ind = corr.index.values[Z['leaves']]
 
-    corr = corr.loc[ind][ind]
-    tab = tab.loc[ind][['BP_mono_gene_nor_combat_peer_10',
-        'BP_neut_gene_nor_combat_peer_10',
-        'geneexp_total_NTR',
-        'BP_mono_K27AC_log2rpm_peer_10',
-        'BP_neut_K27AC_log2rpm_peer_10',
-        'BP_mono_K4ME1_log2rpm_peer_10',
-        'BP_neut_K4ME1_log2rpm_peer_10',
-        'BP_tcel_K4ME1_log2rpm_peer_10']]
+#     corr = corr.loc[ind][ind]
+#     tab = tab.loc[ind][['BP_mono_gene_nor_combat_peer_10',
+#         'BP_neut_gene_nor_combat_peer_10',
+#         'geneexp_total_NTR',
+#         'BP_mono_K27AC_log2rpm_peer_10',
+#         'BP_neut_K27AC_log2rpm_peer_10',
+#         'BP_mono_K4ME1_log2rpm_peer_10',
+#         'BP_neut_K4ME1_log2rpm_peer_10',
+#         'BP_tcel_K4ME1_log2rpm_peer_10']]
 
-    print(tab.shape)
-    sns.heatmap(tab, yticklabels=1)
-    plt.tight_layout()
-    plt.show()
+#     print(tab.shape)
+#     sns.heatmap(tab, yticklabels=1)
+#     plt.tight_layout()
+#     plt.show()

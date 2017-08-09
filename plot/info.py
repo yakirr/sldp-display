@@ -43,7 +43,7 @@ annots = annots[annots.supp >= 5000]
 
 annots = pd.merge(annots, experiment_meta, on='experiment', how='left')
 
-# create description and gene group columns
+# create description and gene group columns for annotations
 annots['desc'] = annots.function
 annots.loc[annots.function.isnull(), 'desc'] = \
         annots.loc[annots.function.isnull(), 'category']
@@ -58,7 +58,7 @@ annots.loc[annots.gene.str.contains('POL2') |
         annots.gene.str.contains('TBP') |
         annots.gene.str.contains('TAF1'), 'genegroup'] = 'POL2/TBP/TAF1'
 
-# create tissue column
+# create tissue column for annotations
 annots['tissue'] = 'non-blood'
 annots.loc[annots.cell_line.str.contains('GM') |
         annots.cell_line.str.contains('K562') |
