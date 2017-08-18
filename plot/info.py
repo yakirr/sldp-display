@@ -8,11 +8,11 @@ annotinfodir = sldp + '/0.annotsummary/'
 # phenotype names
 phenotypes = {
         'CD' : 'CD',
-        'IBD' : 'IBD',
         'PASS_Anorexia' : 'Anorexia',
         'PASS_HDL' : 'HDL',
         'PASS_Lupus' : 'Lupus',
-        'UKBiobank_Eczema' : 'Eczema',
+        'UKB_460K.disease_ALLERGY_ECZEMA_DIAGNOSED' : 'Eczema',
+        'UKB_460K.cov_EDU_YEARS' : 'Years of Education',
         'BP_mono_gene_nor_combat_peer_10' : 'GE (mono)',
         'BP_mono_K27AC_log2rpm_peer_10' : 'K27ac (mono)',
         'BP_mono_K4ME1_log2rpm_peer_10' : 'K4me1 (mono)',

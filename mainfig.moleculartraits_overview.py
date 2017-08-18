@@ -10,8 +10,7 @@ import pyutils.fs as fs
 from plot import params, results_overview; reload(results_overview)
 
 me = os.path.dirname(os.path.abspath(__file__))
-indir_bp = params.sldp+'/7.blueprint_a9/compiled_results_uniform_normalization/'
-indir_ntr = params.sldp+'/8.totalexpNTR_a9/compiled_results_uniform_normalization/'
+indir = params.sldp+'/7.p9_a9/compiled_results/'
 outname = me+'/out/mainfig.moleculartraits_overview.raw.pdf'
 
 ## aesthetics
@@ -19,12 +18,6 @@ scatterprops = {
         'alpha':0.7,
         's':2.5,
         'linewidth':0
-        }
-sig_thresh_line_props = {
-        'color':'gray',
-        'linestyle':'--',
-        'linewidth':0.5,
-        'alpha':0.8
         }
 trendlineprops = {
         'c':'gray',
@@ -44,12 +37,11 @@ ax6 = plt.subplot(gs[2:,7:])
 ## get data
 global results, phenos
 results = results_overview.init(
-        [indir_bp+'/blueprint.maf5_Winv_ahat_h.all',
-            indir_ntr+'/ntr.all'],
-        [indir_bp+'/blueprint.maf5_Winv_ahat_h.fdr',
-            indir_ntr+'/ntr.fdr'])
+        [indir+'/p9.molecular.all'],
+        [indir+'/p9.molecular.fdr5'],
+        'desc')
+results['activator'] = results.uniprot_activator & ~results.uniprot_repressor
 passed = results[results.passed].copy()
-passed['activator'] = passed.uniprot_activator# & ~passed.uniprot_repressor
 
 ## make figure
 # BP gene exp
@@ -82,6 +74,12 @@ results_overview.segmented_bar(ax5, myresults,
         'activator', 'r',
         'H3K27ac (BLUEPRINT)', params.labelfontsize+2)
 
+## add global figure legend in bottom right
+patches = results_overview.legend_contents('desc')
+ax6.set_axis_off()
+ax6.legend(handles=patches, fontsize=6, markerscale=2, borderpad=0.1,
+    labelspacing=0.4, columnspacing=0.2, loc='upper left')
+
 ## scatter plot for NTR vs BLUEPRINT
 # create data
 x = results[results.pheno.str.contains('neut') &
@@ -89,18 +87,18 @@ x = results[results.pheno.str.contains('neut') &
 y = results[results.pheno.str.contains('NTR')].sort_values('annot')
 
 # plot points
-ax3.scatter(x[x.activator].sf_z, y[x.activator].sf_z, c='r',
+ax3.scatter(x[x.activator.values].sf_z, y[x.activator.values].sf_z, c='r',
         label='activators',
         **scatterprops)
-ax3.scatter(x[~x.activator].sf_z, y[~x.activator].sf_z, c='b',
+ax3.scatter(x[~x.activator.values].sf_z, y[~x.activator.values].sf_z, c='b',
         label='other',
         **scatterprops)
 
 # add horizontal and vertical significance threshold lines
 threshy = np.min(y[y.passed].sf_z)
 threshx = np.min(x[x.passed].sf_z)
-ax3.axhline(y=threshy, **sig_thresh_line_props)
-ax3.axvline(x=threshx, **sig_thresh_line_props)
+ax3.axhline(y=threshy, **params.sig_thresh_line_props)
+ax3.axvline(x=threshx, **params.sig_thresh_line_props)
 
 # add trendline
 ax3.plot(np.unique(x.sf_z), np.poly1d(np.polyfit(x.sf_z, y.sf_z, 1))(np.unique(x.sf_z)),
@@ -119,12 +117,6 @@ ax3.set_yticks([-2,0,2,4])
 ax3.set_xlabel(r'BLUEPRINT z-score', fontsize=params.labelfontsize)
 ax3.set_ylabel(r'NTR z-score', fontsize=params.labelfontsize)
 ax3.tick_params(**params.tickprops)
-
-## add global figure legend in bottom right
-patches = results_overview.legend_contents('desc')
-ax6.set_axis_off()
-ax6.legend(handles=patches, fontsize=6, markerscale=2, borderpad=0.1,
-    labelspacing=0.4, columnspacing=0.2, loc='upper left')
 
 # finishing touches and save
 sns.despine()

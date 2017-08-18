@@ -7,7 +7,7 @@ import matplotlib.gridspec as gridspec
 import scipy.cluster.hierarchy as sch
 import pandas as pd
 import numpy as np
-import info; reload(info)
+import info, params
 
 volcanoprops = {
         'linewidth':0}
@@ -34,7 +34,7 @@ def get_color(annots, colorby, apply_to=None):
     return [colordict[x] for x in annots[colorby]]
 
 # load up information for plot
-def init(all_results, fdr_results, colorby='desc'):
+def init(all_results, fdr_results, colorby):
     # read in results and merge in fdr information
     fdr = format_annot_names(
             pd.concat([pd.read_csv(f, sep='\t') for f in fdr_results], axis=0))
@@ -93,7 +93,7 @@ def volcano(ax, results, pheno, fontsize):
     ax.scatter(myresults.r_f, myresults.logp,
             color=myresults.color, s=myresults.markersize,
             **volcanoprops)
-    ax.axhline(y=thresh, color='gray', linestyle='--', linewidth=0.5, alpha=0.8)
+    ax.axhline(y=thresh, **params.sig_thresh_line_props)
 
     # set labels
     ax.set_xlabel(r'Estimated $r_f$', fontsize=fontsize)
@@ -120,24 +120,6 @@ def legend_contents(groupby):
     # patches.append(mpatches.Patch(color=nonsig_color, label='No sig. results'))
 
     return patches
-
-def summary_table(results, pheno):
-    summary = pd.DataFrame()
-    myresults = results[(results.pheno == pheno) & results.passed & (results.sf_p <= 1)]
-    for g in myresults.gene.unique():
-        thisbe = myresults[myresults.gene == g]
-        summary = summary.append({
-            'pheno':pheno,
-            'gene':g,
-            'num':len(thisbe),
-            'pmin':thisbe.sf_p.min(),
-            'pmax':thisbe.sf_p.max(),
-            'r_f':thisbe.r_f.mean(),
-            'cells':','.join(thisbe.cell_line.values)},
-            ignore_index=True)
-    summary.sort_values(
-            'pmin', ascending=True, inplace=True)
-    return summary[['gene','pheno','pmin','pmax','num','r_f','cells']]
 
 def segmented_bar(ax, passed, phenos, extra_mask, extra_color, title, fontsize,
         unmarked_color='b'):
@@ -173,6 +155,24 @@ def segmented_bar(ax, passed, phenos, extra_mask, extra_color, title, fontsize,
     ax.set_title(title, fontsize=fontsize)
 
 # ######### things below this line are unused ##########
+# def summary_table(results, pheno):
+#     summary = pd.DataFrame()
+#     myresults = results[(results.pheno == pheno) & results.passed & (results.sf_p <= 1)]
+#     for g in myresults.gene.unique():
+#         thisbe = myresults[myresults.gene == g]
+#         summary = summary.append({
+#             'pheno':pheno,
+#             'gene':g,
+#             'num':len(thisbe),
+#             'pmin':thisbe.sf_p.min(),
+#             'pmax':thisbe.sf_p.max(),
+#             'r_f':thisbe.r_f.mean(),
+#             'cells':','.join(thisbe.cell_line.values)},
+#             ignore_index=True)
+#     summary.sort_values(
+#             'pmin', ascending=True, inplace=True)
+#     return summary[['gene','pheno','pmin','pmax','num','r_f','cells']]
+
 # def plot_with_corr(results, pheno):
 #     myresults = results[
 #             (results.pheno == pheno) & results.passed & (results.sf_z**2>9)].set_index('annot')

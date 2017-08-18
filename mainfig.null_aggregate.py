@@ -14,10 +14,6 @@ indir = params.sldp+'/1.null_calib_a9/compiled_results'
 outname = me+'/out/mainfig.null_aggregate.raw.png'
 
 # set aesthetics
-qqprops = {
-        's':1.5,
-        'fontsize':params.labelfontsize,
-        'linewidth':0}
 
 # set params
 weights='Winv_ahat_h'
@@ -37,7 +33,7 @@ fname = '{}/{}.{}_{}.all'.format(
 print(fname)
 results = pd.read_csv(fname, sep='\t')
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
-vis.qqplot(results.sf_p, errorbars=False, ax=ax1, **qqprops)
+vis.qqplot(results.sf_p, errorbars=False, ax=ax1, **params.qqprops)
 ax1.text(2.8, -0.5, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
         fontsize=params.labelfontsize, color='b')
 # make tick labels at integer increments
@@ -53,7 +49,7 @@ fname = '{}/{}.{}_{}.all'.format(
 print(fname)
 results = pd.read_csv(fname, sep='\t', nrows=427*3)
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
-vis.qqplot(results.sf_p, errorbars=False, ax=ax2, **qqprops)
+vis.qqplot(results.sf_p, errorbars=False, ax=ax2, **params.qqprops)
 ax2.text(1.5, -0.25, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
         fontsize=params.labelfontsize, color='b')
 # make tick labels at integer increments
@@ -69,7 +65,7 @@ fname = '{}/{}.{}_{}.all'.format(
 print(fname)
 results = pd.read_csv(fname, sep='\t')
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
-vis.qqplot(results.sf_p, errorbars=False, ax=ax3, c='r', label='no covariates', **qqprops)
+vis.qqplot(results.sf_p, errorbars=False, ax=ax3, c='r', label='no covariates', **params.qqprops)
 ax3.text(2.8, 0.2, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
         fontsize=params.labelfontsize, color='r')
 
@@ -78,7 +74,7 @@ fname = '{}/{}.{}_{}.all'.format(
 print(fname)
 results = pd.read_csv(fname, sep='\t')
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
-vis.qqplot(results.sf_p, errorbars=False, ax=ax3, label='5 MAF bins',  **qqprops)
+vis.qqplot(results.sf_p, errorbars=False, ax=ax3, label='5 MAF bins',  **params.qqprops)
 ax3.text(2.8, -0.5, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
         fontsize=params.labelfontsize, color='b')
 # add legend and format ticks

@@ -15,10 +15,6 @@ indir = params.sldp+'/1.null_calib_a9/compiled_results'
 outname = me+'/out/suppfig.null_perannot.raw.pdf'
 
 # set aesthetics
-qqprops = {
-        's':1.5,
-        'fontsize':params.labelfontsize,
-        'linewidth':0}
 
 # set params
 weights='Winv_ahat_h'
@@ -53,7 +49,7 @@ processed.to_csv('{}/nullperannot.data.tsv'.format(indir), sep='\t')
 print(sig.simes(processed.simes))
 
 ## create qqplot for part a
-vis.qqplot(processed.simes, errorbars=False, ax=ax1, **qqprops)
+vis.qqplot(processed.simes, errorbars=False, ax=ax1, **params.qqprops)
 # make tick labels at integer increments
 ax1.set_xticks(list(set(range(-5,10)) & set(ax1.get_xticks().astype(int))))
 ax1.set_yticks(list(set(range(-5,10)) & set(ax1.get_yticks().astype(int))))

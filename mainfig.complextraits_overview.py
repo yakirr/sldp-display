@@ -8,11 +8,18 @@ import pyutils.fs as fs
 from plot import params, results_overview; reload(results_overview)
 
 me = os.path.dirname(os.path.abspath(__file__))
-indir = params.sldp+'/9.p7_a9/compiled_results/'
+indir = params.sldp+'/7.p9_a9/compiled_results/'
 outname = me+'/out/mainfig.complextraits_overview.raw.pdf'
 
 # set parameters
-phenos = ['CD','PASS_Lupus','UKBiobank_Eczema','PASS_HDL','PASS_Anorexia']
+phenos = [
+    'CD',
+    'PASS_Lupus',
+    'UKB_460K.disease_ALLERGY_ECZEMA_DIAGNOSED',
+    # 'PASS_HDL',
+    'UKB_460K.cov_EDU_YEARS',
+    'PASS_Anorexia'
+    ]
 nrows = 2; ncols = 3
 
 # set up figure
@@ -21,8 +28,9 @@ gs = gridspec.GridSpec(nrows,ncols)
 
 # get data
 results = results_overview.init(
-        [indir+'/complextraits.all'],
-        [indir+'/complextraits.fdr'])
+        [indir+'/p9.complex.all'],
+        [indir+'/p9.complex.fdr5'],
+        'genegroup')
 
 # make figure
 for cell, pheno in zip(gs, phenos):
