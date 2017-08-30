@@ -10,7 +10,7 @@ from plot import params, biaspower
 
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/2.vary_h2v/compiled_results/'
-outname = me+'/out/mainfig.biaspower.raw.pdf'
+outname = me+'/out/suppfig.power_naive.raw.pdf'
 
 # set aesthetics
 powererrorbarprops = {
@@ -24,16 +24,11 @@ estimands = {
         'h2v':'$h^2_v$',
         'h2v_h2g':'$h^2_v/h^2_g$'
         }
-weights = {
-        'Winv_ahat_h':'non-trivial weights',
-        'Winv_ahat_I':'trivial weights',
-        'RV':'naiveRV',
-        'NA':'naive'
-        }
 
 # set parameters
 desc='maf5'
 refpanel='KG3.wim9nm'
+estimand='r_f'
 
 ## set up figure
 fig = plt.figure(figsize=(5,2.5))
@@ -42,35 +37,56 @@ ax1 = plt.subplot(gs[0,0])
 ax2 = plt.subplot(gs[0,1])
 
 ## create power plot for part a
-print('making power plot')
-estimand='r_f'
+print('making power plot a')
 biaspower.power_plot(ax1,
         params.sldp+'/2.vary_h2v/compiled_results/',
-        desc, 'Winv_ahat_h', refpanel,
+        'maf5', 'Winv_ahat_h', refpanel,
         estimand, '{:.3f}',
-        label=weights['Winv_ahat_h'],
+        label='SLDP (default weights)',
         c='b', labelfontsize=params.labelfontsize, **powererrorbarprops)
 biaspower.power_plot(ax1,
         params.sldp+'/2.vary_h2v/compiled_results/',
-        desc, 'Winv_ahat_I', refpanel,
+        'maf5', 'Winv_ahat_I', refpanel,
         estimand, '{:.3f}',
-        label=weights['Winv_ahat_I'],
+        label='SLDP (trivial weights)',
         c='r', labelfontsize=params.labelfontsize, **powererrorbarprops)
+biaspower.power_plot(ax1,
+        params.sldp+'/2.vary_h2v/compiled_results/',
+        'naive', 'Winv_ahat_I', refpanel,
+        estimand, '{:.3f}',
+        label='naive method',
+        c='g', labelfontsize=params.labelfontsize, **powererrorbarprops)
 ax1.axis((-0.005, 0.055, 0, 1.05))
 ax1.set_xlabel(r'True $r_f$', fontsize=params.labelfontsize)
 ax1.tick_params(**params.tickprops)
 ax1.legend(loc='upper left', fontsize=5, markerscale=2, borderpad=0.1,
         labelspacing=0.2, columnspacing=0.2)
 
-## make bias plot for part b
-print('making bias plot')
-estimand='r_f'
-biaspower.bias_plot(ax2, indir, desc, 'Winv_ahat_h', refpanel, estimand)
+## create power plot for part b
+print('making power plot b')
+biaspower.power_plot(ax2,
+        params.sldp+'/2.vary_h2v/compiled_results/',
+        'maf5', 'Winv_ahat_h_halfhm3', refpanel,
+        estimand, '{:.3f}',
+        label='SLDP (default weights)',
+        c='b', labelfontsize=params.labelfontsize, **powererrorbarprops)
+biaspower.power_plot(ax2,
+        params.sldp+'/2.vary_h2v/compiled_results/',
+        'maf5', 'Winv_ahat_I_halfhm3', refpanel,
+        estimand, '{:.3f}',
+        label='SLDP (trivial weights)',
+        c='r', labelfontsize=params.labelfontsize, **powererrorbarprops)
+biaspower.power_plot(ax2,
+        params.sldp+'/2.vary_h2v/compiled_results/',
+        'naive', 'Winv_ahat_I_halfhm3', refpanel,
+        estimand, '{:.3f}',
+        label='naive method',
+        c='g', labelfontsize=params.labelfontsize, **powererrorbarprops)
+ax2.axis((-0.005, 0.055, 0, 1.05))
+ax2.set_xlabel(r'True $r_f$', fontsize=params.labelfontsize)
 ax2.tick_params(**params.tickprops)
-ax2.set_xlabel(r'True '+estimands[estimand], fontsize=params.labelfontsize)
-ax2.set_ylabel(r'Estimated '+estimands[estimand], fontsize=params.labelfontsize)
-
-
+ax2.legend(loc='upper left', fontsize=5, markerscale=2, borderpad=0.1,
+        labelspacing=0.2, columnspacing=0.2)
 
 # finishing touches and save
 sns.despine()
