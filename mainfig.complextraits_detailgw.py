@@ -16,12 +16,12 @@ outname = me+'/out/mainfig.complextraits_detailgw.raw.pdf'
 # set parameters
 toplot = [
         # ('CD', 'SydhGm18951Pol2Iggmus', 'POL2'),
+        # ('UKB_460K.disease_ALLERGY_ECZEMA_DIAGNOSED','UtaMcf7CtcfSerumstim', 'CTCF'),
         ('UKB_460K.cov_EDU_YEARS','HaibGm12878Bcl11aPcr1x', 'EDU', 'BCL11A', 'LCL',
             2, 60, 61, None),
+        ('PASS_Lupus','SydhK562CtcfbIggrab', 'SLE', 'CTCF', 'K562', None, None, None, None),
         ('CD', 'SydhK562Irf1Ifng6h', 'CD', 'IRF1', 'K562', 5, 131.3, 133.49,
-            '/groups/price/yakir/dpos/WEIGHTS/NTR.BLOOD.RNAARR/NTR.IRF1.wgt.RDat'),
-        ('PASS_Lupus','SydhK562CtcfbIggrab', 'SLE', 'CTCF', 'K562', None, None, None, None)
-        # ('UKB_460K.disease_ALLERGY_ECZEMA_DIAGNOSED','UtaMcf7CtcfSerumstim', 'CTCF')
+            '/groups/price/yakir/dpos/WEIGHTS/NTR.BLOOD.RNAARR/NTR.IRF1.wgt.RDat')
         ]
 nrows = 3; ncols = 3
 

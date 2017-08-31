@@ -15,9 +15,9 @@ outname = me+'/out/mainfig.complextraits_overview.raw.pdf'
 phenos = [
     'CD',
     'PASS_Lupus',
+    'UKB_460K.cov_EDU_YEARS',
     'UKB_460K.disease_ALLERGY_ECZEMA_DIAGNOSED',
     # 'PASS_HDL',
-    'UKB_460K.cov_EDU_YEARS',
     'PASS_Anorexia'
     ]
 nrows = 2; ncols = 3
