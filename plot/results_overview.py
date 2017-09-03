@@ -104,7 +104,7 @@ def volcano(ax, results, pheno, fontsize):
     xmin = 1.2*min(myresults.r_f); xmax = 1.2*max(myresults.r_f)
     delta = (xmax - xmin)/4
     ax.set_xticks(np.concatenate([
-        np.arange(0, 1.2*xmin, -delta)[::-1], np.arange(0, 1.2*xmax, delta)
+        np.arange(0, 1.2*xmin, -delta)[::-1], np.arange(delta, 1.2*xmax, delta)
         ]))
     ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%0.2f'))
     ax.set_xlim(xmin, xmax)

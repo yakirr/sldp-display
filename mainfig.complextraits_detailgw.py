@@ -18,9 +18,9 @@ toplot = [
         # ('CD', 'SydhGm18951Pol2Iggmus', 'POL2'),
         # ('UKB_460K.disease_ALLERGY_ECZEMA_DIAGNOSED','UtaMcf7CtcfSerumstim', 'CTCF'),
         ('UKB_460K.cov_EDU_YEARS','HaibGm12878Bcl11aPcr1x', 'EDU', 'BCL11A', 'LCL',
-            2, 60, 61, None),
+            2, 60.5, 61, None), #rs10189857, at chr2:60713235, has chisq = 65.5015
         ('PASS_Lupus','SydhK562CtcfbIggrab', 'SLE', 'CTCF', 'K562', None, None, None, None),
-        ('CD', 'SydhK562Irf1Ifng6h', 'CD', 'IRF1', 'K562', 5, 131.3, 133.49,
+        ('CD', 'SydhK562Irf1Ifng6h', 'CD', 'IRF1', 'K562', 5, 131.3, 132.323,
             '/groups/price/yakir/dpos/WEIGHTS/NTR.BLOOD.RNAARR/NTR.IRF1.wgt.RDat')
         ]
 nrows = 3; ncols = 3
@@ -44,10 +44,10 @@ for i,(pheno, annot, prettypheno, tf, cell_line, c, start, end, twas) in enumera
     ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     ax.yaxis.offsetText.set_fontsize(params.labelfontsize)
     xs, ys = vis.scatter_b(
-            data.Rv_resid, data.ahat_resid, binsize=4000, extreme_only=5, errorbars=True,
+            data.Rv_resid, data.ahat_resid, binsize=4000, extreme_only=5, errorbars=False,
             ax=ax,
             color='purple',
-            fmt='-o',
+            fmt='o',
             linewidth=0.5,
             markersize=2)
     ax.plot([min(xs), max(xs)], [mu*min(xs), mu*max(xs)],
@@ -59,20 +59,19 @@ for i,(pheno, annot, prettypheno, tf, cell_line, c, start, end, twas) in enumera
     # make plot of q
     ax = plt.subplot(gs[i,1])
 
-    qsort = np.sort(chunks.q)
-    qs = pd.DataFrame()
-    qs['q'] = qsort
-    half = np.argmin(qsort**2)
-    percent = (chunks.q > 0).sum()/len(chunks)
-    lim = max(np.abs(chunks.q.min()), np.abs(chunks.q.max()))
+    nums = pd.DataFrame()
+    nums['slope'] = np.sort(chunks.q.values)
+    half = np.argmin(nums.slope**2)
+    percent = (nums.slope > 0).sum()/len(nums)
+    lim = max(np.abs(nums.slope.min()), np.abs(nums.slope.max()))
 
     bardata = pd.DataFrame()
     for t in np.arange(0, lim, lim/5):
-        total = (np.abs(qs.q)>t).sum()
+        total = (np.abs(nums.slope)>t).sum()
         bardata = bardata.append({
             't':t,
-            'pos':(qs.q>t).sum()/total,
-            'neg':(qs.q<-t).sum()/total,
+            'pos':(nums.slope>t).sum()/total,
+            'neg':(nums.slope<-t).sum()/total,
             'total':total}, ignore_index=True)
     ax.bar(bardata.t-lim/15, bardata.pos, lim/15, color='red', linewidth=0.2, label='+')
     ax.bar(bardata.t, bardata.neg, lim/15, color='blue', linewidth=0.2, label='-')

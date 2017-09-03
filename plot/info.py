@@ -7,7 +7,7 @@ annotinfodir = sldp + '/0.annotsummary/'
 
 # phenotype names
 phenotypes = {
-        'CD' : 'CD',
+        'CD' : 'Crohn\'s',
         'PASS_Anorexia' : 'Anorexia',
         'PASS_HDL' : 'HDL',
         'PASS_Lupus' : 'Lupus',

@@ -10,7 +10,7 @@ from plot import params, biaspower
 
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/2.vary_h2v/compiled_results/'
-outname = me+'/out/suppfig.power_naive.raw.pdf'
+outname = me+'/out/suppfig.power_naive.pdf'
 
 # set aesthetics
 powererrorbarprops = {
