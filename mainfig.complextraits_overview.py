@@ -5,7 +5,7 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import pyutils.fs as fs
-from plot import params, results_overview; reload(results_overview)
+from plot import params, results_overview
 
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/7.p9_a9/compiled_results/'
@@ -17,7 +17,7 @@ phenos = [
     'PASS_Lupus',
     'UKB_460K.cov_EDU_YEARS',
     'UKB_460K.disease_ALLERGY_ECZEMA_DIAGNOSED',
-    # 'PASS_HDL',
+    'PASS_HDL',
     'PASS_Anorexia'
     ]
 nrows = 2; ncols = 3
@@ -39,12 +39,12 @@ for cell, pheno in zip(gs, phenos):
     results_overview.volcano(ax, results, pheno, params.labelfontsize)
     ax.tick_params(**params.tickprops)
 
-# add legend in bottom right
-ax = plt.subplot(gs[1,2])
-patches = results_overview.legend_contents('genegroup')
-ax.set_axis_off()
-ax.legend(handles=patches, fontsize=6, markerscale=2, borderpad=0.1,
-    labelspacing=0.4, columnspacing=0.2, loc='upper left')
+# # add legend in bottom right
+# ax = plt.subplot(gs[1,2])
+# patches = results_overview.legend_contents('genegroup')
+# ax.set_axis_off()
+# ax.legend(handles=patches, fontsize=6, markerscale=2, borderpad=0.1,
+#     labelspacing=0.4, columnspacing=0.2, loc='upper left')
 
 # finish up
 sns.despine()

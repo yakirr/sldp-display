@@ -11,31 +11,37 @@ import statutils.vis as vis
 import gprim.annotation as ga
 from plot import params
 
-def plot_ahat_vs_Rv(ax, indir, pheno, annot):
+def plot_ahat_vs_Rv(ax, indir, pheno, annot, (xmin, xmax, xexp), (ymin, ymax, yexp)):
     annotname = annot+',diff,'+annot+',-1.R'
     print(pheno, annot)
     print(indir+pheno+'.'+annotname+'.toplot.gz')
     data = pd.read_csv(indir+pheno+'.'+annotname+'.toplot.gz', sep='\t')
     chunks = pd.read_csv(indir+pheno+'.'+annotname+'.chunks', sep='\t')
     mu = chunks.q.sum()/chunks.r.sum()
+    xmult = np.power(10, xexp)
+    ymult = np.power(10, yexp)
 
     # make plot of ahat vs Rv
-    # ax.locator_params(nbins=4)
-    # ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-    # ax.yaxis.offsetText.set_fontsize(params.labelfontsize)
     ax.set_xticks([0])
     ax.set_yticks([0])
     xs, ys = vis.scatter_b(
-            data.Rv_resid, data.ahat_resid, binsize=4000, extreme_only=5, errorbars=False,
+            data.Rv_resid*xmult,
+            data.ahat_resid*ymult,
+            binsize=4000, extreme_only=5, errorbars=False,
             ax=ax,
             color='purple',
             fmt='o',
             linewidth=0.5,
             markersize=2)
-    ax.plot([min(xs), max(xs)], [mu*min(xs), mu*max(xs)],
+    print(min(xs), max(xs), min(ys), max(ys))
+    ax.plot([min(xs), max(xs)], [mu*min(xs)*ymult/xmult, mu*max(xs)*ymult/xmult],
         c='gray', linewidth=0.8, dashes=[2,2])
-    ax.set_xlabel(r'avg $Rv$', fontsize=params.labelfontsize)
-    ax.set_ylabel(r'avg $\hat\alpha$', fontsize=params.labelfontsize)
+    ax.set_xlim(xmin, xmax); ax.set_xticks([xmin, xmax])
+    ax.set_ylim(ymin, ymax); ax.set_yticks([ymin, ymax])
+    ax.set_xlabel(r'avg $Rv$ $(\times 10^{'+str(xexp)+r'})$',
+            fontsize=params.labelfontsize)
+    ax.set_ylabel(r'avg $\hat\alpha$ $(\times 10^{'+str(yexp)+r'})$',
+            fontsize=params.labelfontsize)
     ax.tick_params(**params.tickprops)
 
 def plot_q(ax, indir, pheno, annot):
@@ -77,6 +83,7 @@ def plot_q(ax, indir, pheno, annot):
     ax.tick_params(**params.tickprops)
 
 def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
+        ytick=None, yrange=None,
         twas=None, show_gene_loc=False):
     def add_twas(snps, twas):
         # read TWAS weights
@@ -114,6 +121,7 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
     snps['logp'] = -np.log10(st.chi2.sf(snps.Ztrait**2,1))
     snps['sig'] = (snps.logp >= -np.log10(5e-8))
     snps['pol_logp'] = snps.logp * np.sign(snps.Ztrait)
+    print(snps.pol_logp.min(), snps.pol_logp.max(), snps.logp.min(), snps.logp.max())
 
     if twas is None:
         # get axis
@@ -129,7 +137,12 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
         ax.axhline(y=-np.log10(5e-8), **params.sig_thresh_line_props)
 
         # format axes
-        ax.set_ylim(0, 1.2*max(snps.logp))
+        if yrange is None:
+            ax.set_ylim(0, 1.2*max(snps.logp))
+        else:
+            ax.set_ylim(0, yrange)
+        if ytick is not None:
+            ax.set_yticks([0, ytick])
         ax.set_ylabel(r'$-\log_{10}(p)$',
                 fontsize=params.labelfontsize)
     else:
@@ -161,7 +174,12 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
         ax.axhline(y=0, color='black', linewidth=0.5)
 
         # format axes
-        ax.set_ylim(-1.1*max(snps.logp), 1.1*max(snps.logp))
+        if yrange is None:
+            ax.set_ylim(-1.1*max(snps.logp), 1.1*max(snps.logp))
+        else:
+            ax.set_ylim(-yrange/2, yrange/2)
+        if ytick is not None:
+            ax.set_yticks([-ytick, 0, ytick])
         ax.set_ylabel(r'polarized $-\log_{10}(p)$',
                 fontsize=params.labelfontsize)
         ax.spines['bottom'].set_color('none')
@@ -172,7 +190,6 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
         ax.axvline(x=gend, color='green', linewidth=0.5)
 
     # apply general axis formatting for both types of plots
-    ax.locator_params(nbins=2, axis='y')
     ax.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
     ax.set_xticks([start, end])
     ax.set_xlim(start, end)

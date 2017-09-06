@@ -25,8 +25,8 @@ estimands = {
         'h2v_h2g':'$h^2_v/h^2_g$'
         }
 weights = {
-        'Winv_ahat_h':'non-trivial weights',
-        'Winv_ahat_I':'trivial weights',
+        'Winv_ahat_h':'default weights',
+        'Winv_ahat_I':'flat weights',
         'RV':'naiveRV',
         'NA':'naive'
         }

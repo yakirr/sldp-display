@@ -90,23 +90,23 @@ def volcano(ax, results, pheno, fontsize):
     thresh = (high + low)/2
 
     # plot and create FDR line
-    ax.scatter(myresults.r_f, myresults.logp,
+    ax.scatter(myresults.r_f*100, myresults.logp,
             color=myresults.color, s=myresults.markersize,
             **volcanoprops)
     ax.axhline(y=thresh, **params.sig_thresh_line_props)
 
     # set labels
-    ax.set_xlabel(r'Estimated $r_f$', fontsize=fontsize)
+    ax.set_xlabel(r'Estimated $r_f$ (%)', fontsize=fontsize)
     ax.set_ylabel(r'$-\log_{10}(p)$', fontsize=fontsize)
     ax.set_title(info.phenotypes[pheno], fontsize=fontsize+1)
 
     # set axis limits and ticks
-    xmin = 1.2*min(myresults.r_f); xmax = 1.2*max(myresults.r_f)
+    xmin = 1.2*min(myresults.r_f*100); xmax = 1.2*max(myresults.r_f*100)
     delta = (xmax - xmin)/4
     ax.set_xticks(np.concatenate([
         np.arange(0, 1.2*xmin, -delta)[::-1], np.arange(delta, 1.2*xmax, delta)
         ]))
-    ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%0.2f'))
+    ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%0.1f'))
     ax.set_xlim(xmin, xmax)
     ax.set_yticks(list(set(range(-5,10)) & set(ax.get_yticks().astype(int))))
     ax.set_ylim(-0.5, ax.get_ylim()[1])

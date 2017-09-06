@@ -29,9 +29,9 @@ def format_p(p):
     exp = str(int(temp[temp.index('e')+1:]))
     return '$'+base+'\\times 10^{'+exp+'}$'
 results.sf_p = [format_p(x) for x in results.sf_p]
-results.enrichment = ['{:.2f}'.format(x) for x in results.enrichment]
+results.enrichment = ['{:.0%}'.format(x).replace('%',r'\%') for x in results.enrichment]
 results.r_f = ['{:.1%}'.format(x).replace('%',r'\%') for x in results.r_f]
-results = results[['Trait','TF (num)','cell_line','Sign','sf_p','r_f','enrichment']]
+results = results[['Trait','TF (num)','cell_line','r_f','sf_p','enrichment']]
 
 # print as tex
 results.rename(
@@ -39,7 +39,7 @@ results.rename(
         'cell_line':'Best cell line',
         'sf_p':'Best $p$',
         'r_f':'$r_f$',
-        'enrichment':'$(h^2_v/h^2_g)/(|v|_0/M)$',
+        'enrichment':r'\%  exp. unsigned signal',
         }).to_latex(outfile,
                 index=False,
                 column_format='lllcccc',
