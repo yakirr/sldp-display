@@ -31,15 +31,17 @@ def format_p(p):
 results.sf_p = [format_p(x) for x in results.sf_p]
 results.enrichment = ['{:.0%}'.format(x).replace('%',r'\%') for x in results.enrichment]
 results.r_f = ['{:.1%}'.format(x).replace('%',r'\%') for x in results.r_f]
-results = results[['Trait','TF (num)','cell_line','r_f','sf_p','enrichment']]
+results.q = [format_p(x) for x in results.q]
+results.cell_line = [x + ' ()' for x in results.cell_line]
+results = results[['Trait','TF (num)','cell_line','r_f','sf_p','q']]
 
 # print as tex
 results.rename(
     columns={
-        'cell_line':'Best cell line',
-        'sf_p':'Best $p$',
+        'cell_line':'Top cell line',
+        'sf_p':'$p$',
+        'q':'$q$',
         'r_f':'$r_f$',
-        'enrichment':r'\%  exp. unsigned signal',
         }).to_latex(outfile,
                 index=False,
                 column_format='lllcccc',

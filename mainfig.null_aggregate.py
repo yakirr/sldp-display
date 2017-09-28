@@ -34,7 +34,7 @@ print(fname)
 results = pd.read_csv(fname, sep='\t')
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
 vis.qqplot(results.sf_p, errorbars=False, ax=ax1, **params.qqprops)
-ax1.text(2.8, -0.5, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
+ax1.text(2.8, 0.5, 'avg $\chi^2$: {:.3f}'.format((results.sf_z**2).mean()),
         fontsize=params.labelfontsize, color='b')
 # make tick labels at integer increments
 ax1.set_xticks(list(set(range(-5,10)) & set(ax1.get_xticks().astype(int))))
@@ -47,10 +47,14 @@ sim = 'unsigned'
 fname = '{}/{}.{}_{}.all'.format(
     indir, sim, 'maf5', weights)
 print(fname)
-results = pd.read_csv(fname, sep='\t', nrows=427*3)
+results = pd.read_csv(fname, sep='\t')
+print('length of results:', len(results))
+np.random.seed(0)
+results = results.loc[np.random.choice(results.index, size=1000, replace=False)]
+print('new length of results:', len(results))
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
 vis.qqplot(results.sf_p, errorbars=False, ax=ax2, **params.qqprops)
-ax2.text(1.5, -0.25, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
+ax2.text(1.5, 0.25, 'avg $\chi^2$: {:.3f}'.format((results.sf_z**2).mean()),
         fontsize=params.labelfontsize, color='b')
 # make tick labels at integer increments
 ax2.set_xticks(list(set(range(-5,10)) & set(ax2.get_xticks().astype(int))))
@@ -66,7 +70,7 @@ print(fname)
 results = pd.read_csv(fname, sep='\t')
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
 vis.qqplot(results.sf_p, errorbars=False, ax=ax3, c='r', label='no covariates', **params.qqprops)
-ax3.text(2.8, 0.2, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
+ax3.text(2.8, 0.95, 'avg $\chi^2$: {:.3f}'.format((results.sf_z**2).mean()),
         fontsize=params.labelfontsize, color='r')
 
 fname = '{}/{}.{}_{}.all'.format(
@@ -75,7 +79,7 @@ print(fname)
 results = pd.read_csv(fname, sep='\t')
 print((results.sf_p <= 0.05).sum()/float(len(results)), sig.chi2(results.sf_p))
 vis.qqplot(results.sf_p, errorbars=False, ax=ax3, label='5 MAF bins',  **params.qqprops)
-ax3.text(2.8, -0.5, 'avg $\chi^2$: {:.3g}'.format((results.sf_z**2).mean()),
+ax3.text(2.8, 0.414, 'avg $\chi^2$: {:.3f}'.format((results.sf_z**2).mean()),
         fontsize=params.labelfontsize, color='b')
 # add legend and format ticks
 ax3.legend(loc='upper left', fontsize=5, markerscale=2, borderpad=0.1,

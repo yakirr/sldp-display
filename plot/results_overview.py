@@ -39,10 +39,12 @@ def init(all_results, fdr_results, colorby):
     fdr = format_annot_names(
             pd.concat([pd.read_csv(f, sep='\t') for f in fdr_results], axis=0))
     fdr['passed'] = True
+    fdrcols = list(set(['pheno','annot','passed','q'])&set(fdr.columns)) # in case q is absent
     results = pd.merge(
             format_annot_names(
-                pd.concat([pd.read_csv(f, sep='\t') for f in all_results], axis=0)),
-            fdr[['pheno','annot','passed']],
+                pd.concat([pd.read_csv(f, sep='\t') for f in all_results], axis=0)
+                ).drop('q',axis=1, errors='ignore'),
+            fdr[fdrcols],
             on=['pheno','annot'], how='left').fillna(False)
 
     # decide which annots to color and add color information to annot df
@@ -141,10 +143,10 @@ def segmented_bar(ax, passed, phenos, extra_mask, extra_color, title, fontsize,
     for i,(_, row) in enumerate(myresults.iterrows()):
         ax.barh(0, 1, 1, color=row.color, left=i, linewidth=0.2, edgecolor='white')
         if row[extra_mask]:
-            ax.barh(1.1, 1, 0.08, color=extra_color, left=i, linewidth=0)
+            ax.barh(1.1, 1, 0.2, color=extra_color, left=i, linewidth=0)
         else:
-            ax.barh(1.1, 1, 0.08, color=unmarked_color, left=i, linewidth=0)
-    ax.set_ylim(0,1.2)
+            ax.barh(1.1, 1, 0.2, color=unmarked_color, left=i, linewidth=0)
+    ax.set_ylim(0,1.3)
     ax.set_xlim(0, len(myresults))
 
     # make ticks really small and erase axes

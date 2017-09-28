@@ -15,7 +15,9 @@ outname = me+'/out/mainfig.biaspower.raw.pdf'
 # set aesthetics
 powererrorbarprops = {
         'linewidth':0.5,
-        'markersize':1}
+        'capsize':0,
+        'markersize':1
+        }
 
 # set pretty text
 estimands = {
@@ -25,8 +27,8 @@ estimands = {
         'h2v_h2g':'$h^2_v/h^2_g$'
         }
 weights = {
-        'Winv_ahat_h':'default weights',
-        'Winv_ahat_I':'flat weights',
+        'Winv_ahat_h':'generalized least-squares',
+        'Winv_ahat_I':'naive regression',
         'RV':'naiveRV',
         'NA':'naive'
         }

@@ -50,14 +50,16 @@ results_overview.segmented_bar(ax1, passed,
         ['BP_mono_gene_nor_combat_peer_10',
             'BP_neut_gene_nor_combat_peer_10'],
         'activator', 'r',
-        'Expression (BLUEPRINT)', params.labelfontsize+2)
+        'Expression, BLUEPRINT ({} associations)'.format(len(myresults)),
+        params.labelfontsize+2)
 
 # NTR gene exp
 myresults = passed[passed.pheno.str.contains('NTR')]
 results_overview.segmented_bar(ax2, passed,
         ['geneexp_total_NTR'],
         'activator', 'r',
-        'Expression (NTR)', params.labelfontsize+2)
+        'Expression, NTR ({} associations)'.format(len(myresults)),
+        params.labelfontsize+2)
 
 # BP K4me1
 myresults = passed[passed.pheno.str.contains('K4ME1')]
@@ -65,14 +67,16 @@ results_overview.segmented_bar(ax4, myresults,
         ['BP_neut_K4ME1_log2rpm_peer_10',
             'BP_mono_K4ME1_log2rpm_peer_10'],
         'activator', 'r',
-        'H3K4me1 (BLUEPRINT)', params.labelfontsize+2)
+        'H3K4me1, BLUEPRINT ({} associations)'.format(len(myresults)),
+        params.labelfontsize+2)
 
 # BP K27ac
 myresults = passed[passed.pheno.str.contains('K27AC')]
 results_overview.segmented_bar(ax5, myresults,
         ['BP_neut_K27AC_log2rpm_peer_10'],
         'activator', 'r',
-        'H3K27ac (BLUEPRINT)', params.labelfontsize+2)
+        'H3K27ac, BLUEPRINT ({} associations)'.format(len(myresults)),
+        params.labelfontsize+2)
 
 ## add global figure legend in bottom right
 patches = results_overview.legend_contents('desc')
@@ -88,7 +92,7 @@ y = results[results.pheno.str.contains('NTR')].sort_values('annot')
 
 # plot points
 ax3.scatter(x[x.activator.values].sf_z, y[x.activator.values].sf_z, c='r',
-        label='activators',
+        label='activating',
         **scatterprops)
 ax3.scatter(x[~x.activator.values].sf_z, y[~x.activator.values].sf_z, c='b',
         label='other',
@@ -105,8 +109,8 @@ ax3.plot(np.unique(x.sf_z), np.poly1d(np.polyfit(x.sf_z, y.sf_z, 1))(np.unique(x
         **trendlineprops)
 
 # add r2 text label
-r2 = np.corrcoef(x.sf_z, y.sf_z)[0,1]**2
-ax3.text(3, -2, '$r^2$: {:.2g}'.format(r2),
+r = np.corrcoef(x.sf_z, y.sf_z)[0,1]
+ax3.text(3, -2, '$r = {:.2g}$'.format(r),
         fontsize=params.labelfontsize, color='black')
 
 # add legend and format axes
