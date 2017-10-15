@@ -13,11 +13,11 @@ from plot import params, results_detail
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/7.p9_a9/verboseresults/'
 outname = me+'/out/mainfig.complextraits_detailgw.raw.pdf'
+numerical_outname = me+'/out/xlsxtable.complextraits_detailgw.xlsx'
+writer = pd.ExcelWriter(numerical_outname)
 
 # set parameters
 toplot = [
-        # ('CD', 'SydhGm18951Pol2Iggmus', 'POL2'),
-        # ('UKB_460K.disease_ALLERGY_ECZEMA_DIAGNOSED','UtaMcf7CtcfSerumstim', 'CTCF'),
         ('UKB_460K.cov_EDU_YEARS','HaibGm12878Bcl11aPcr1x', 'BCL11A', 'LCL',
             (-1, 1, 1), (-4, 4, 4),
             (20, 21),
@@ -51,24 +51,31 @@ for i,(pheno, annot, tf, cell_line,
         (ytick, yrange),
         c, start, end, gstart, gend, twas) in enumerate(toplot):
     # make plot of ahat vs Rv
-    results_detail.plot_ahat_vs_Rv(plt.subplot(gs[i,:ahat_Rv_plot_ncols]),
+    numbers = results_detail.plot_ahat_vs_Rv(plt.subplot(gs[i,:ahat_Rv_plot_ncols]),
             indir, pheno, annot,
             (xmin, xmax, xexp),
             (ymin, ymax, yexp))
+    numbers.to_excel(
+            writer, chr(65+i)+'.1 GWAS vs SLDP',
+            index=False)
 
     # make manhattan plot
-    results_detail.manhattan(fig, gs[i,ahat_Rv_plot_ncols:],
+    numbers = results_detail.manhattan(fig, gs[i,ahat_Rv_plot_ncols:],
             pheno, tf,
             c, start, end,
             gstart, gend,
             ytick=ytick, yrange=yrange,
             twas=twas, show_gene_loc=False)
+    numbers.to_excel(
+            writer, chr(65+i)+'.2 Manhattan plot',
+            index=False)
 
 # finish up
 sns.despine()
 gs.tight_layout(fig)
 
-print('saving figure')
+print('saving figure and writing numerical results')
 fs.makedir_for_file(outname)
 plt.savefig(outname)
 plt.close()
+writer.save()

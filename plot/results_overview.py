@@ -15,17 +15,20 @@ nonsig_color = (0.5, 0.5, 0.5, 0.4)
 
 # convert long annot names to short annot names
 def format_annot_names(df):
-    df.annot = df.annot.str.split(',').str.get(0)
+    df.annot = df.annot.str.split(',').str.get(0).str.split('.').str.get(0)
     return df
 
 # add color metadata to annotations
-def get_color(annots, colorby, apply_to=None):
+def get_color(annots, colorby, palette='hls', apply_to=None):
     if apply_to is None:
         apply_to = [True]*len(annots)
     apply_to = np.array(apply_to, dtype=bool)
 
-    colors = sns.hls_palette(
-            n_colors=len(annots.loc[apply_to, colorby].unique()),
+    ncolors = len(annots.loc[apply_to, colorby].unique())
+    print(ncolors, 'colors required')
+    colors = sns.color_palette(
+            palette,
+            ncolors
             )
     colordict = {a:nonsig_color for a in annots.loc[~apply_to, colorby].unique()}
     colordict.update(dict(zip(
@@ -34,7 +37,7 @@ def get_color(annots, colorby, apply_to=None):
     return [colordict[x] for x in annots[colorby]]
 
 # load up information for plot
-def init(all_results, fdr_results, colorby):
+def init(all_results, fdr_results, colorby, palette='hls'):
     # read in results and merge in fdr information
     fdr = format_annot_names(
             pd.concat([pd.read_csv(f, sep='\t') for f in fdr_results], axis=0))
@@ -50,6 +53,7 @@ def init(all_results, fdr_results, colorby):
     # decide which annots to color and add color information to annot df
     annots_to_color = fdr.annot.unique()
     info.annots['color'] = get_color(info.annots, colorby,
+            palette=palette,
             apply_to=[a in annots_to_color for a in info.annots.annot])
 
     # merge everything
@@ -72,19 +76,20 @@ def volcano(ax, results, pheno, fontsize):
 
     # gray out any TF with no passing annotations
     myresults['graymask'] = ~myresults.passed
-    for gg in myresults[myresults.passed].genegroup.unique():
-        myresults.loc[myresults.genegroup == gg, 'graymask'] = False
+    for gg in myresults[myresults.passed].gene.unique():
+        myresults.loc[myresults.gene == gg, 'graymask'] = False
     myresults.loc[myresults.graymask, 'color'] = \
             myresults.loc[myresults.graymask, 'color'].apply(lambda x: nonsig_color)
 
     # sort so that TFs with fewer experiments that passed will get plotted on top
     counts = pd.DataFrame(
-            myresults[myresults.passed].genegroup.value_counts()).rename(
-                    columns={'genegroup':'count'})
+            myresults[myresults.passed].gene.value_counts()).rename(
+                    columns={'gene':'count'})
     myresults = pd.merge(myresults,
             counts,
-            left_on='genegroup', right_index=True, how='left').sort_values(
+            left_on='gene', right_index=True, how='left').sort_values(
             ['graymask','count'], ascending=[False,False])
+    print(myresults.loc[myresults.passed,['color','gene']])
 
     # figure out where to draw FDR threshold
     high = myresults[myresults.passed].logp.min()
@@ -151,90 +156,11 @@ def segmented_bar(ax, passed, phenos, extra_mask, extra_color, title, fontsize,
 
     # make ticks really small and erase axes
     ax.tick_params(
-        length=0.5,
-        pad=0.5,
-        labelsize=0.5)
+        length=0,
+        pad=0,
+        labelsize=0)
     ax.axis('off')
 
     # set title
     ax.set_title(title, fontsize=fontsize)
 
-# ######### things below this line are unused ##########
-# def summary_table(results, pheno):
-#     summary = pd.DataFrame()
-#     myresults = results[(results.pheno == pheno) & results.passed & (results.sf_p <= 1)]
-#     for g in myresults.gene.unique():
-#         thisbe = myresults[myresults.gene == g]
-#         summary = summary.append({
-#             'pheno':pheno,
-#             'gene':g,
-#             'num':len(thisbe),
-#             'pmin':thisbe.sf_p.min(),
-#             'pmax':thisbe.sf_p.max(),
-#             'r_f':thisbe.r_f.mean(),
-#             'cells':','.join(thisbe.cell_line.values)},
-#             ignore_index=True)
-#     summary.sort_values(
-#             'pmin', ascending=True, inplace=True)
-#     return summary[['gene','pheno','pmin','pmax','num','r_f','cells']]
-
-# def plot_with_corr(results, pheno):
-#     myresults = results[
-#             (results.pheno == pheno) & results.passed & (results.sf_z**2>9)].set_index('annot')
-#     sig = myresults.index.unique()
-#     corr = pd.read_csv(info.sldp+'/6.annotcorr_a9/results/all.corr', sep='\t', index_col=0)
-#     corr.index = corr.index.str.split(',').str.get(0)
-#     corr.columns = corr.columns.str.split(',').str.get(0)
-#     corr = corr.loc[sig][sig]
-
-#     Y = sch.linkage(corr.values, method='centroid') # if the above lines aren't working
-#     Z = sch.dendrogram(Y, orientation='right', no_plot=True)
-#     ind = corr.index.values[Z['leaves']]
-
-#     corr = corr.loc[ind][ind]
-#     myresults = myresults.loc[ind]
-
-#     fig = plt.figure(figsize=(6,6))
-#     gs = gridspec.GridSpec(4,4)
-#     ax1 = plt.subplot(gs[0:3,0:3])
-#     ax2 = plt.subplot(gs[3,0:3])
-
-#     print(corr.shape)
-#     sns.heatmap(corr, square=True, xticklabels=False, yticklabels=1,
-#             ax=ax1, cbar=False)
-#     # ax2.scatter(range(len(myresults)), -np.log10(myresults.sf_p))
-#     ax2.plot(-np.log10(myresults.sf_p))
-#     ax2.set_xlim(-1, len(myresults))
-#     sns.despine()
-#     gs.tight_layout(fig)
-#     plt.show()
-
-# def heatmap(results):
-#     myresults = results[results.passed & (results.sf_p <= 1e-3)].copy()
-#     myresults['logp'] = -np.log10(myresults.sf_p)
-#     tab = myresults.pivot(index='annot', columns='pheno', values='logp').fillna(0)
-
-#     sig = tab.index.unique()
-#     corr = pd.read_csv(info.sldp+'/6.annotcorr_a9/results/all.corr', sep='\t', index_col=0)
-#     corr.index = corr.index.str.split(',').str.get(0)
-#     corr.columns = corr.columns.str.split(',').str.get(0)
-#     corr = corr.loc[sig][sig]
-
-#     Y = sch.linkage(corr.values, method='centroid') # if the above lines aren't working
-#     Z = sch.dendrogram(Y, orientation='right', no_plot=True)
-#     ind = corr.index.values[Z['leaves']]
-
-#     corr = corr.loc[ind][ind]
-#     tab = tab.loc[ind][['BP_mono_gene_nor_combat_peer_10',
-#         'BP_neut_gene_nor_combat_peer_10',
-#         'geneexp_total_NTR',
-#         'BP_mono_K27AC_log2rpm_peer_10',
-#         'BP_neut_K27AC_log2rpm_peer_10',
-#         'BP_mono_K4ME1_log2rpm_peer_10',
-#         'BP_neut_K4ME1_log2rpm_peer_10',
-#         'BP_tcel_K4ME1_log2rpm_peer_10']]
-
-#     print(tab.shape)
-#     sns.heatmap(tab, yticklabels=1)
-#     plt.tight_layout()
-#     plt.show()

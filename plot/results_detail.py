@@ -44,43 +44,10 @@ def plot_ahat_vs_Rv(ax, indir, pheno, annot, (xmin, xmax, xexp), (ymin, ymax, ye
             fontsize=params.labelfontsize)
     ax.tick_params(**params.tickprops)
 
-def plot_q(ax, indir, pheno, annot):
-    annotname = annot+',diff,'+annot+',-1.R'
-    print(pheno, annot)
-    print(indir+pheno+'.'+annotname+'.toplot.gz')
-    chunks = pd.read_csv(indir+pheno+'.'+annotname+'.chunks', sep='\t')
     numbers = pd.DataFrame()
-    numbers['slope'] = np.sort(chunks.q.values)
-    half = np.argmin(numbers.slope**2)
-    percent = (numbers.slope > 0).sum()/len(numbers)
-    lim = max(np.abs(numbers.slope.min()), np.abs(numbers.slope.max()))
-
-    bardata = pd.DataFrame()
-    for t in np.arange(0, lim, lim/5):
-        total = (np.abs(numbers.slope)>t).sum()
-        bardata = bardata.append({
-            't':t,
-            'pos':(numbers.slope>t).sum()/total,
-            'neg':(numbers.slope<-t).sum()/total,
-            'total':total}, ignore_index=True)
-    ax.bar(bardata.t-lim/15, bardata.pos, lim/15, color='red', linewidth=0.2, label='+')
-    ax.bar(bardata.t, bardata.neg, lim/15, color='blue', linewidth=0.2, label='-')
-    ax.set_xlim(-lim/15, lim-lim/5+lim/15)
-    ax.set_xticks(bardata.t)
-    ax.set_xticklabels([
-        '{:.1f}'.format(bardata.t.values[0]*1e4),
-        '',
-        '{:.1f}'.format(bardata.t.values[2]*1e4),
-        '',
-        '{:.1f}'.format(bardata.t.values[4]*1e4)
-        ])
-    ax.set_ylim(0, 1)
-    ax.set_yticks(np.arange(0,1.1,0.2))
-    ax.set_xlabel(r'$t$ $(\times 10^4)$', fontsize=params.labelfontsize)
-    ax.set_ylabel(r'% w/strength $>t$', fontsize=params.labelfontsize)
-    ax.legend(loc='upper left', fontsize=5, handlelength=0.7, handleheight=0.5, borderpad=0.1,
-            labelspacing=0.1, columnspacing=0.1)
-    ax.tick_params(**params.tickprops)
+    numbers['mean alphahat'] = xs / xmult
+    numbers['mean Rv'] = ys / ymult
+    return numbers
 
 def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
         ytick=None, yrange=None,
@@ -129,7 +96,7 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
 
         # plot
         ax.scatter(snps[snps.sig].BP/1e6, snps[snps.sig].logp,
-                s=3, linewidth=0, c='purple')
+                s=4, linewidth=0, c='purple')
         ax.scatter(snps[~snps.sig].BP/1e6, snps[~snps.sig].logp,
                 s=1, linewidth=0, c='gray', alpha=0.5)
 
@@ -154,17 +121,18 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
         # add twas data and polarize plot
         snps = add_twas(snps, twas)
 
+        # add size information
+        snps.loc[snps.sig,'s'] = 4
+        snps.loc[~snps.sig,'s'] = 1
+
         # plot
-        cb = ax.scatter(snps[snps.sig].BP/1e6, snps[snps.sig].pol_logp,
-                c=snps[snps.sig].Z, cmap=cm.bwr,
-                s=3, linewidth=0)
-        ax.scatter(snps[~snps.sig].BP/1e6, snps[~snps.sig].pol_logp,
-                c='gray', alpha=0.5,
-                s=1, linewidth=0)
+        cb = ax.scatter(snps.BP/1e6, snps.pol_logp,
+                c=np.sign(snps.Z)*np.sqrt(np.abs(snps.Z)), cmap=cm.bwr,
+                s=snps.s, linewidth=0)
 
         # colorbar properties
         cb = fig.colorbar(cb, cax=cax, ticks=[]) # could set to [-4.5, 4.5]
-        cb.set_label(label=r'$\it{'+tf+'}$ eQTL z-score', size=params.labelfontsize)
+        cb.set_label(label=r'$\it{'+tf+'}$ eQTL z-score', size=params.labelfontsize-2)
         cb.outline.set_linewidth(0.05)
         cax.tick_params(**params.tickprops)
 
@@ -181,7 +149,8 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
         if ytick is not None:
             ax.set_yticks([-ytick, 0, ytick])
         ax.set_ylabel(r'polarized $-\log_{10}(p)$',
-                fontsize=params.labelfontsize)
+                fontsize=params.labelfontsize,
+                labelpad=-1)
         ax.spines['bottom'].set_color('none')
 
     # add vertical lines at gene end point if required
@@ -195,3 +164,49 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
     ax.set_xlim(start, end)
     ax.set_xlabel(r'Chr {} (Mb)'.format(c), fontsize=params.labelfontsize)
     ax.tick_params(**params.tickprops)
+
+    if twas is None:
+        return snps[['CHR','BP','SNP','A1','A2','logp']].rename(
+                columns={'logp':'-log10(p)'})
+    else:
+        return snps[['CHR','BP','SNP','A1','A2','pol_logp','Z']].rename(
+                columns={'pol_logp':'polarized -log10(p)',
+                    'Z':'IRF1 expr Z-score'})
+
+def plot_q(ax, indir, pheno, annot):
+    annotname = annot+',diff,'+annot+',-1.R'
+    print(pheno, annot)
+    print(indir+pheno+'.'+annotname+'.toplot.gz')
+    chunks = pd.read_csv(indir+pheno+'.'+annotname+'.chunks', sep='\t')
+    numbers = pd.DataFrame()
+    numbers['slope'] = np.sort(chunks.q.values)
+    half = np.argmin(numbers.slope**2)
+    percent = (numbers.slope > 0).sum()/len(numbers)
+    lim = max(np.abs(numbers.slope.min()), np.abs(numbers.slope.max()))
+
+    bardata = pd.DataFrame()
+    for t in np.arange(0, lim, lim/5):
+        total = (np.abs(numbers.slope)>t).sum()
+        bardata = bardata.append({
+            't':t,
+            'pos':(numbers.slope>t).sum()/total,
+            'neg':(numbers.slope<-t).sum()/total,
+            'total':total}, ignore_index=True)
+    ax.bar(bardata.t-lim/15, bardata.pos, lim/15, color='red', linewidth=0.2, label='+')
+    ax.bar(bardata.t, bardata.neg, lim/15, color='blue', linewidth=0.2, label='-')
+    ax.set_xlim(-lim/15, lim-lim/5+lim/15)
+    ax.set_xticks(bardata.t)
+    ax.set_xticklabels([
+        '{:.1f}'.format(bardata.t.values[0]*1e4),
+        '',
+        '{:.1f}'.format(bardata.t.values[2]*1e4),
+        '',
+        '{:.1f}'.format(bardata.t.values[4]*1e4)
+        ])
+    ax.set_ylim(0, 1)
+    ax.set_yticks(np.arange(0,1.1,0.2))
+    ax.set_xlabel(r'$t$ $(\times 10^4)$', fontsize=params.labelfontsize-1)
+    ax.set_ylabel(r'% w/strength $>t$', fontsize=params.labelfontsize-1)
+    ax.legend(loc='upper left', fontsize=5, handlelength=0.7, handleheight=0.5, borderpad=0.1,
+            labelspacing=0.1, columnspacing=0.1)
+    ax.tick_params(**dict(params.tickprops, labelsize=6))

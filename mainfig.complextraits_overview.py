@@ -27,10 +27,13 @@ fig = plt.figure(figsize=(6,4))
 gs = gridspec.GridSpec(nrows,ncols)
 
 # get data
+colors = ['#d1c00a', '#ff8c42', '#4f2e91', '#457e7d', '#c88268', '#6699cc',
+    '#ff3c38', '#0e4749', '#000000', '#95c623', '#ff45ff', '#914018']
 results = results_overview.init(
         [indir+'/p9.complex.all'],
         [indir+'/p9.complex.fdr5'],
-        'genegroup')
+        'gene',
+        palette=colors)
 
 # make figure
 for cell, pheno in zip(gs, phenos):

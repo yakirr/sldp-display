@@ -5,15 +5,16 @@ sns.set(style='ticks', palette='Set2')
 plt.rc('axes', linewidth=0.8)
 
 sldp = '/groups/price/yakir/sldp/'
+sumstats = '/groups/price/yakir/data/sumstats.hm3/'
 
 # aesthetics
-labelfontsize=6
+labelfontsize=8
 tickprops = {
         'direction':'out',
         'length':2,
         'width':0.8,
         'pad':4,
-        'labelsize':6}
+        'labelsize':7}
 sig_thresh_line_props = {
         'color':'gray',
         'linestyle':'--',

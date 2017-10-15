@@ -57,12 +57,32 @@ def bias_plot(ax, indir, desc, weights, refpanel, estimand):
     ax.axis((-marginx/2, max(x)+marginx,
             np.min(ests)-marginy/2, np.max(ests)+marginy))
 
+    numbers = pd.DataFrame()
+    numbers[estimand] = x
+    numbers['mean(est)'] = y
+    numbers['S.E. of mean(est)'] = stderr_mean
+    numbers['min(est)'] = np.min(ests, axis=0)
+    numbers['25th percentile(est)'] = np.percentile(ests, 25, axis=0)
+    numbers['75th percentile(est)'] = np.percentile(ests, 75, axis=0)
+    numbers['max(est)'] = np.max(ests, axis=0)
+    return numbers
+
+# note: weights can be a list of strings or just one string
+# samplesizefactor is intended to be so you can reduce the number of effectively independent
+#   points in the standard error computation. This is used when we pass in many reps of
+#   the analysis with fewer typed SNPs. Each rep corresponds to a new set of typed SNPs,
+#   but they're not actually independent of each other
 def power_plot(ax, indir, desc, weights, refpanel,
-        truthcolname, truthformat, labelfontsize=6, **powererrorbarprops):
+        truthcolname, truthformat,
+        samplesizefactor=1, labelfontsize=6, **powererrorbarprops):
+    if type(weights) != list:
+        weights = [weights]
     # get data
-    results = pd.read_csv(
-            '{}{}.{}_{}.results'.format(indir, refpanel, desc, weights),
-            sep='\t')
+    results = pd.concat([
+            pd.read_csv(
+                '{}{}.{}_{}.results'.format(indir, refpanel, desc, w),
+                sep='\t')
+            for w in weights])
     print(refpanel, desc, weights, ':', len(results), 'results')
 
     # add in true value of the parameter of interest
@@ -78,7 +98,7 @@ def power_plot(ax, indir, desc, weights, refpanel,
     for i, row in power.iterrows():
         mask = (results['truth'] == row['truth'])
         p = power.loc[i,'power'] = (results[mask].sf_p <= 0.05).sum() / mask.sum()
-        power.loc[i,'power_se'] = np.sqrt(p*(1-p)/mask.sum())
+        power.loc[i,'power_se'] = np.sqrt(p*(1-p)/(mask.sum()/samplesizefactor))
     power.sort_values(by='truth', inplace=True)
 
     # generate plot
@@ -86,3 +106,8 @@ def power_plot(ax, indir, desc, weights, refpanel,
             yerr=power.power_se,
             **powererrorbarprops)
     ax.set_ylabel('Power ($\\alpha=0.05$)', fontsize=labelfontsize)
+
+    return power[['truth','power','power_se']].rename(
+            columns={'truth':truthcolname,
+                'power':'est. power (alpha=0.05)',
+                'power_se':'S.E. of est. power'})

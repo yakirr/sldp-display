@@ -15,6 +15,7 @@ outname = me+'/out/suppfig.power_naive.pdf'
 # set aesthetics
 powererrorbarprops = {
         'linewidth':0.5,
+        'capsize':0,
         'markersize':1}
 
 # set pretty text
@@ -64,22 +65,32 @@ ax1.legend(loc='upper left', fontsize=5, markerscale=2, borderpad=0.1,
 
 ## create power plot for part b
 print('making power plot b')
+suff = ['_halfhm3_'+str(i) for i in range(1,6)]
 biaspower.power_plot(ax2,
         params.sldp+'/2.vary_h2v/compiled_results/',
-        'maf5', 'Winv_ahat_h_halfhm3', refpanel,
+        'maf5',
+        ['Winv_ahat_h'+s for s in suff],
+        refpanel,
         estimand, '{:.3f}',
+        samplesizefactor=5,
         label='SLDP (GLS)',
         c='b', labelfontsize=params.labelfontsize, **powererrorbarprops)
 biaspower.power_plot(ax2,
         params.sldp+'/2.vary_h2v/compiled_results/',
-        'maf5', 'Winv_ahat_I_halfhm3', refpanel,
+        'maf5',
+        ['Winv_ahat_I'+s for s in suff],
+        refpanel,
         estimand, '{:.3f}',
+        samplesizefactor=5,
         label='SLDP (OLS)',
         c='r', labelfontsize=params.labelfontsize, **powererrorbarprops)
 biaspower.power_plot(ax2,
         params.sldp+'/2.vary_h2v/compiled_results/',
-        'naive', 'Winv_ahat_I_halfhm3', refpanel,
+        'naive',
+        ['Winv_ahat_I'+s for s in suff],
+        refpanel,
         estimand, '{:.3f}',
+        samplesizefactor=5,
         label='naive method',
         c='g', labelfontsize=params.labelfontsize, **powererrorbarprops)
 ax2.axis((-0.005, 0.055, 0, 1.05))

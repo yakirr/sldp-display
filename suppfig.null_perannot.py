@@ -65,7 +65,7 @@ ax2.scatter(x, y, s=1.5, linewidth=0)
 ax2.plot(np.unique(x), np.poly1d(np.polyfit(x, y, 1))(np.unique(x)),
         c='gray', linewidth=0.8, dashes=[2,2])
 r2 = np.corrcoef(processed.maf_z**2, processed.avgchi2)[0,1]**2
-ax2.text(3, 0.82, '$r^2$: {:.2g}'.format(r2),
+ax2.text(2, 0.82, '$r^2$: {:.2g}'.format(r2),
         fontsize=params.labelfontsize, color='b')
 
 ax2.set_xlabel(r'$|z|$, minor-allele-only trait', fontsize=params.labelfontsize)

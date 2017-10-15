@@ -9,7 +9,7 @@ import seaborn as sns
 from plot import params, biaspower
 
 me = os.path.dirname(os.path.abspath(__file__))
-outname = me+'/out/suppfig.power_N_h2g.raw.pdf'
+outname = me+'/out/suppfig.power_N_h2g.pdf'
 
 # set aesthetics
 powererrorbarprops = {

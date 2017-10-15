@@ -51,7 +51,7 @@ results_overview.segmented_bar(ax1, passed,
             'BP_neut_gene_nor_combat_peer_10'],
         'activator', 'r',
         'Expression, BLUEPRINT ({} associations)'.format(len(myresults)),
-        params.labelfontsize+2)
+        params.labelfontsize)
 
 # NTR gene exp
 myresults = passed[passed.pheno.str.contains('NTR')]
@@ -59,7 +59,7 @@ results_overview.segmented_bar(ax2, passed,
         ['geneexp_total_NTR'],
         'activator', 'r',
         'Expression, NTR ({} associations)'.format(len(myresults)),
-        params.labelfontsize+2)
+        params.labelfontsize)
 
 # BP K4me1
 myresults = passed[passed.pheno.str.contains('K4ME1')]
@@ -68,7 +68,7 @@ results_overview.segmented_bar(ax4, myresults,
             'BP_mono_K4ME1_log2rpm_peer_10'],
         'activator', 'r',
         'H3K4me1, BLUEPRINT ({} associations)'.format(len(myresults)),
-        params.labelfontsize+2)
+        params.labelfontsize)
 
 # BP K27ac
 myresults = passed[passed.pheno.str.contains('K27AC')]
@@ -76,13 +76,13 @@ results_overview.segmented_bar(ax5, myresults,
         ['BP_neut_K27AC_log2rpm_peer_10'],
         'activator', 'r',
         'H3K27ac, BLUEPRINT ({} associations)'.format(len(myresults)),
-        params.labelfontsize+2)
+        params.labelfontsize)
 
 ## add global figure legend in bottom right
 patches = results_overview.legend_contents('desc')
 ax6.set_axis_off()
-ax6.legend(handles=patches, fontsize=6, markerscale=2, borderpad=0.1,
-    labelspacing=0.4, columnspacing=0.2, loc='upper left')
+ax6.legend(handles=patches, fontsize=7, handlelength=1.5, borderpad=0.1,
+    labelspacing=0.4, loc='upper left', bbox_to_anchor=(-0.18,1))
 
 ## scatter plot for NTR vs BLUEPRINT
 # create data
