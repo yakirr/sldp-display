@@ -122,17 +122,17 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
         snps = add_twas(snps, twas)
 
         # add size information
-        snps.loc[snps.sig,'s'] = 14
-        snps.loc[~snps.sig,'s'] = 4
+        snps.loc[snps.sig,'s'] = 4
+        snps.loc[~snps.sig,'s'] = 1
 
         # plot
-        plot = snps[snps.sig]
+        plot = snps; # plot = snps[snps.sig]
         cb = ax.scatter(plot.BP/1e6, plot.pol_logp,
                 c=np.sign(plot.Z)*np.sqrt(np.abs(plot.Z)), cmap=cm.bwr,
                 s=plot.s, linewidth=0)
-        plot = snps[~snps.sig]
-        ax.scatter(plot.BP/1e6, plot.pol_logp,
-                c='gray', s=plot.s, linewidth=0)
+        # plot = snps[~snps.sig]
+        # ax.scatter(plot.BP/1e6, plot.pol_logp,
+        #         c='gray', s=plot.s, linewidth=0)
 
         # colorbar properties
         cb = fig.colorbar(cb, cax=cax, ticks=[]) # could set to [-4.5, 4.5]
