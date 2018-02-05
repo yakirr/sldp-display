@@ -70,10 +70,10 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
 
     # read trait sumstats and process
     print('reading sumstats')
-    ahat = pd.read_csv('/groups/price/yakir/data/sumstats.hm3/processed/'+pheno+'.sumstats.gz',
+    ahat = pd.read_csv('/n/groups/price/yakir/data/sumstats.hm3/processed/'+pheno+'.sumstats.gz',
             sep='\t').rename(columns={'Z':'Ztrait'})
     print('reading snps')
-    snps = pd.read_csv('/groups/price/ldsc/reference_files/1000G_EUR_Phase3/plink_files/'+
+    snps = pd.read_csv('/n/groups/price/ldsc/reference_files/1000G_EUR_Phase3/plink_files/'+
             '1000G.EUR.QC.'+str(c)+'.bim', header=None,
             names=['CHR','SNP','CM','BP','A1','A2'], delim_whitespace=True)
     snps = snps[(snps.CHR==c)&(snps.BP>=start*1e6)&(snps.BP<=end*1e6)]
@@ -122,13 +122,17 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
         snps = add_twas(snps, twas)
 
         # add size information
-        snps.loc[snps.sig,'s'] = 4
-        snps.loc[~snps.sig,'s'] = 1
+        snps.loc[snps.sig,'s'] = 14
+        snps.loc[~snps.sig,'s'] = 4
 
         # plot
-        cb = ax.scatter(snps.BP/1e6, snps.pol_logp,
-                c=np.sign(snps.Z)*np.sqrt(np.abs(snps.Z)), cmap=cm.bwr,
-                s=snps.s, linewidth=0)
+        plot = snps[snps.sig]
+        cb = ax.scatter(plot.BP/1e6, plot.pol_logp,
+                c=np.sign(plot.Z)*np.sqrt(np.abs(plot.Z)), cmap=cm.bwr,
+                s=plot.s, linewidth=0)
+        plot = snps[~snps.sig]
+        ax.scatter(plot.BP/1e6, plot.pol_logp,
+                c='gray', s=plot.s, linewidth=0)
 
         # colorbar properties
         cb = fig.colorbar(cb, cax=cax, ticks=[]) # could set to [-4.5, 4.5]
