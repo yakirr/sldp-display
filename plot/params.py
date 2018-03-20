@@ -4,7 +4,7 @@ import seaborn as sns
 sns.set(style='ticks', palette='Set2')
 plt.rc('axes', linewidth=0.8)
 
-sldp = '/n/groups/price/yakir/sldp/'
+sldp = '/n/groups/price/yakir/sldp.sub_ng/'
 sumstats = '/n/groups/price/yakir/data/sumstats.hm3/'
 
 # aesthetics

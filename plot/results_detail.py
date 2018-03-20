@@ -38,9 +38,9 @@ def plot_ahat_vs_Rv(ax, indir, pheno, annot, (xmin, xmax, xexp), (ymin, ymax, ye
         c='gray', linewidth=0.8, dashes=[2,2])
     ax.set_xlim(xmin, xmax); ax.set_xticks([xmin, xmax])
     ax.set_ylim(ymin, ymax); ax.set_yticks([ymin, ymax])
-    ax.set_xlabel(r'avg $Rv$ $(\times 10^{'+str(xexp)+r'})$',
+    ax.set_xlabel(r'avg $Rv$ $(\times 10^{'+str(-xexp)+r'})$',
             fontsize=params.labelfontsize)
-    ax.set_ylabel(r'avg $\hat\alpha$ $(\times 10^{'+str(yexp)+r'})$',
+    ax.set_ylabel(r'avg $\hat\alpha$ $(\times 10^{'+str(-yexp)+r'})$',
             fontsize=params.labelfontsize)
     ax.tick_params(**params.tickprops)
 

@@ -12,7 +12,7 @@ from plot import params, results_detail
 
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/7.p9_a9/verboseresults/'
-outname = me+'/out/tempfig.encode.pdf'
+outname = me+'/out/talkfig.irf1locus.pdf'
 print(outname)
 
 # set parameters
