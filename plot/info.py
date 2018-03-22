@@ -2,7 +2,7 @@ from __future__ import print_function, division
 import pandas as pd
 import os
 
-sldp = '/groups/price/yakir/sldp'
+sldp = '/groups/price/yakir/sldp.sub_ng'
 annotinfodir = sldp + '/0.annotsummary/'
 
 # phenotype names
