@@ -20,15 +20,21 @@ writer = pd.ExcelWriter(numerical_outname)
 toplot = [
         ('UKB_460K.disease_ALLERGY_ECZEMA_DIAGNOSED','UtaMcf7CtcfSerumstim', 'CTCF', 'MCF7',
             (-5, 5, 1), (-4, 4, 4),
-            (20, 21),
-            16, 67.096, 68.173,
-            67.596, 67.673,
-            None),
-        ('UKB_460K.disease_ALLERGY_ECZEMA_DIAGNOSED','UtaMcf7CtcfSerumstim', 'CTCF', 'MCF7',
-            (-5, 5, 1), (-4, 4, 4),
             (20, 25),
             3, 186.939, 187.963,
             187.439, 187.463,
+            None),
+        ('PASS_Anorexia','HaibHepg2Sp1Pcr1x', 'SP1', 'HEPG2',
+            (-5, 5, 1), (-4, 4, 4),
+            (20, 25),
+            12, 53.773979, 53.810226,
+            53.273979, 54.310226,
+            None),
+        ('CD','SydhGm18951Pol2Iggmus', 'POL2', 'GM18951',
+            (-5, 5, 1), (-4, 4, 4),
+            (20, 25),
+            19, 1.086578, 1.095391,
+            0.586578, 1.595391,
             None)
         ]
 nrows = 3; ncols = 100

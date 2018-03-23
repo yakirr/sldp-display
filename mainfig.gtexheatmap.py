@@ -11,10 +11,10 @@ from plot import params
 
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldprev+'/1.basset1tfs_p12/molecular_gtexv7_tissue/'
-outname = me+'/out/mainfig.gtexheatmap.raw.png'
+outname = me+'/out/mainfig.gtexheatmap.raw.pdf'
 
 # set parameters
-nrows = 10; ncols = 100
+nrows = 100; ncols = 100
 highlightedtfs = [
         'EBF1',
         'HNF4A',
@@ -46,7 +46,7 @@ highlightedtissues = [
         ]
 
 # set up figure
-fig = plt.figure(figsize=(6,4))
+fig = plt.figure(figsize=(6,3.6))
 gs = gridspec.GridSpec(nrows,ncols)
 
 # get data
@@ -93,21 +93,21 @@ tab_resid = toplot.pivot(
         index='gene', columns='phenoname', values='tissue_specific').fillna(0).T
 tab_resid = tab_resid.loc[tab.index][tab.columns]
 
-# set up figure
-fig = plt.figure(figsize=(5,3))
-gs = gridspec.GridSpec(10,100)
-
 ## plot heatmap
-ax = plt.subplot(gs[:,:92])
-cax = plt.subplot(gs[2:8,97:])
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+ax = plt.subplot(gs[:95,:])
+# cax = plt.subplot(gs[95:,30:70])
 cb = ax.matshow(tab.values, interpolation='nearest', vmin=-7, vmax=7,
         cmap='bwr', aspect='equal')
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("bottom", size="5%", pad=0.05)
+cax.set_aspect(aspect=0.1)
 ## Major ticks
 ax.set_xticks(range(len(tab.columns)))
 ax.set_yticks(range(len(tab)))
 ## Labels for major ticks
-ax.set_xticklabels(tab.columns, rotation=90, fontsize=3.5)
-ax.set_yticklabels(tab.index, fontsize=3.5)
+ax.set_xticklabels(tab.columns, rotation=90, fontsize=4)
+ax.set_yticklabels(tab.index, fontsize=4)
 ## Minor ticks
 ax.set_xticks(np.arange(-.5, len(tab.columns), 1), minor=True);
 ax.set_yticks(np.arange(-.5, len(tab), 1), minor=True);
@@ -135,13 +135,14 @@ for l in ax.get_xticklabels() + ax.get_yticklabels():
 ax.set_xlim(0-0.5, len(tab.columns)-0.5)
 ax.set_ylim(len(tab.index)-0.5, 0-0.5)
 ## color bar
-cax.tick_params(size=0, labelsize=4, pad=3)
-cb = fig.colorbar(cb, cax=cax, ticks=[-7,0,7])
+cax.tick_params(size=0, labelsize=5, pad=3)
+cb = fig.colorbar(cb, cax=cax, ticks=[-7,0,7], orientation='horizontal')
 cb.ax.set_yticklabels([r'$\leq -7$',r'$0$',r'$\geq 7$'])
-cb.set_label(label=r'$-\log_{10}p$ (polarized)', fontsize=5, labelpad=-2)
+cb.set_label(label=r'$-\log_{10}(p)$ (polarized)', fontsize=5, labelpad=2)
 cb.outline.set_linewidth(0.05)
 
-# finish up (without tight_layout and despine)
+# finish up (without despine)
+fig.tight_layout()
 print('saving figure', outname)
 fs.makedir_for_file(outname)
 plt.savefig(outname, dpi=500)
