@@ -6,7 +6,7 @@ import matplotlib.gridspec as gridspec
 from matplotlib.ticker import FormatStrFormatter
 import matplotlib.cm as cm
 import scipy.stats as st
-from rpy2.robjects import r, pandas2ri
+# from rpy2.robjects import r, pandas2ri
 import statutils.vis as vis
 import gprim.annotation as ga
 from plot import params
@@ -70,10 +70,10 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
 
     # read trait sumstats and process
     print('reading sumstats')
-    ahat = pd.read_csv('/n/groups/price/yakir/data/sumstats.hm3/processed/'+pheno+'.sumstats.gz',
+    ahat = pd.read_csv(params.sumstats+'processed/'+pheno+'.sumstats.gz',
             sep='\t').rename(columns={'Z':'Ztrait'})
     print('reading snps')
-    snps = pd.read_csv('/n/groups/price/ldsc/reference_files/1000G_EUR_Phase3/plink_files/'+
+    snps = pd.read_csv(params.kg3+'plink_files/'+
             '1000G.EUR.QC.'+str(c)+'.bim', header=None,
             names=['CHR','SNP','CM','BP','A1','A2'], delim_whitespace=True)
     snps = snps[(snps.CHR==c)&(snps.BP>=start*1e6)&(snps.BP<=end*1e6)]

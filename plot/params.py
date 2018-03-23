@@ -4,9 +4,10 @@ import seaborn as sns
 sns.set(style='ticks', palette='Set2')
 plt.rc('axes', linewidth=0.8)
 
-sldp = '/n/groups/price/yakir/sldp.sub_ng/'
-sldprev = '/n/groups/price/yakir/sldp.rev1_ng/'
-sumstats = '/n/groups/price/yakir/data/sumstats.hm3/'
+sldp = '../sldp.sub_ng/'
+sldprev = '../sldp.rev1_ng/'
+sumstats = '../data/sumstats.hm3/'
+kg3 = '../../ldsc/reference_files/1000G_EUR_Phase3/'
 
 # aesthetics
 labelfontsize=8

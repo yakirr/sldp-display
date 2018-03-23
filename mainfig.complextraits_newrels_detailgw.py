@@ -25,16 +25,16 @@ toplot = [
             187.439, 187.463,
             None),
         ('PASS_Anorexia','HaibHepg2Sp1Pcr1x', 'SP1', 'HEPG2',
-            (-5, 5, 1), (-4, 4, 4),
-            (20, 25),
-            12, 53.773979, 53.810226,
-            53.273979, 54.310226,
+            (-1.1, 1.1, 1), (-1.6, 1.6, 3),
+            (20, 21),
+            12, 53.273979, 54.310226,
+            53.773979, 53.810226,
             None),
         ('CD','SydhGm18951Pol2Iggmus', 'POL2', 'GM18951',
-            (-5, 5, 1), (-4, 4, 4),
-            (20, 25),
-            19, 1.086578, 1.095391,
-            0.586578, 1.595391,
+            (-1.2, 1.2, 1), (-2.2, 2.2, 3),
+            (20, 21),
+            19, 0.586578, 1.595391,
+            1.086578, 1.095391,
             None)
         ]
 nrows = 3; ncols = 100
@@ -65,7 +65,7 @@ for i,(pheno, annot, tf, cell_line,
             c, start, end,
             gstart, gend,
             ytick=ytick, yrange=yrange,
-            twas=twas, show_gene_loc=False)
+            twas=twas, show_gene_loc=True)
     numbers.to_excel(
             writer, chr(65+i)+'.2 Manhattan plot',
             index=False)
