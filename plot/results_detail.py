@@ -166,7 +166,7 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
     ax.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
     ax.set_xticks([start, end])
     ax.set_xlim(start, end)
-    ax.set_xlabel(r'Chr {} (Mb)'.format(c), fontsize=params.labelfontsize)
+    ax.set_xlabel(r'chr {} (Mb)'.format(c), fontsize=params.labelfontsize)
     ax.tick_params(**params.tickprops)
 
     if twas is None:
@@ -214,3 +214,56 @@ def plot_q(ax, indir, pheno, annot):
     ax.legend(loc='upper left', fontsize=5, handlelength=0.7, handleheight=0.5, borderpad=0.1,
             labelspacing=0.1, columnspacing=0.1)
     ax.tick_params(**dict(params.tickprops, labelsize=6))
+
+def enrichment(ax, enrichments, pheno, enrichment_tfs, num_enrichments=2):
+    print('reading enrichments and filtering')
+    e = pd.read_csv(enrichments, sep='\t')
+    e = e[e.target.str.contains(pheno)]
+    containstfs = np.any([e.target.str.contains(tf) for tf in enrichment_tfs], axis=0)
+    e = e[containstfs]
+    e['x'] = e.mean_in_wgt / e.mean_out_wgt
+    e['xabs'] = e.mean_in_wgt - e.mean_out_wgt
+    sortkey=['p_wgt','xabs']
+    print('sorting by', sortkey)
+    top = e.sort_values(by=sortkey)[:2]
+
+    print(top[['target','p_wgt','mean_in_wgt','mean_out_wgt']])
+    print()
+    print([(g,z) for g,z in zip(top.geneset, top.x)])
+    print()
+
+    ind = np.arange(2)
+    width=0.4
+    rects1 = ax.barh(ind + width/2,
+            top.mean_in_wgt / top.mean_out_wgt, width,
+            xerr=top.std_in_wgt / top.mean_out_wgt,
+            color='IndianRed',
+            error_kw=dict(ecolor='black', lw=1, capsize=0, capthick=0),
+            label='in gene set')
+    rects2 = ax.barh(ind - width/2,
+            top.mean_out_wgt / top.mean_out_wgt, width,
+            xerr=top.std_out_wgt / top.mean_out_wgt,
+            color='SkyBlue',
+            error_kw=dict(ecolor='black', lw=1, capsize=0, capthick=0),
+            label='not in gene set')
+
+    ax.margins(y=0.1)
+    maxy = max(top.mean_in_wgt / top.mean_out_wgt + top.std_in_wgt / top.mean_out_wgt)
+    ax.set_xlim((0, maxy))
+    ax.set_xticks([1,int(maxy/2)])
+    ax.set_xlabel('enrichment', fontsize=params.labelfontsize)
+    ax.set_yticks([])
+    ax.tick_params(**params.tickprops)
+
+    top['Trait'] = top.target.str.split('.').str.get(0)
+    top['Annotation'] = top.target.str.split('.').str.get(1)
+    top.loc[top.p_wgt == 0, 'p_wgt'] = '<1e-6'
+    return top[['Trait','Annotation','geneset','mean_in_wgt','mean_out_wgt',
+        'std_in_wgt','std_out_wgt','p_wgt']].rename(
+                columns={
+                    'geneset':'Gene set',
+                    'mean_in_wgt':'Avg covariance in set',
+                    'mean_out_wgt':'Avg covariance outside set',
+                    'std_in_wgt':'Std error(Avg in set)',
+                    'std_out_wgt':'Std error(Avg outside set)',
+                    'p_wgt':'p'})
