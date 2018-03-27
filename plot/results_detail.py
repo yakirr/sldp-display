@@ -215,7 +215,7 @@ def plot_q(ax, indir, pheno, annot):
             labelspacing=0.1, columnspacing=0.1)
     ax.tick_params(**dict(params.tickprops, labelsize=6))
 
-def enrichment(ax, enrichments, pheno, enrichment_tfs, num_enrichments=2):
+def enrichment(ax, enrichments, pheno, enrichment_tfs, ticks, num_enrichments=2):
     print('reading enrichments and filtering')
     e = pd.read_csv(enrichments, sep='\t')
     e = e[e.target.str.contains(pheno)]
@@ -233,25 +233,21 @@ def enrichment(ax, enrichments, pheno, enrichment_tfs, num_enrichments=2):
     print()
 
     ind = np.arange(2)
-    width=0.4
-    rects1 = ax.barh(ind + width/2,
+    width=0.7
+    rects1 = ax.barh(ind,
             top.mean_in_wgt / top.mean_out_wgt, width,
             xerr=top.std_in_wgt / top.mean_out_wgt,
             color='IndianRed',
             error_kw=dict(ecolor='black', lw=1, capsize=0, capthick=0),
             label='in gene set')
-    rects2 = ax.barh(ind - width/2,
-            top.mean_out_wgt / top.mean_out_wgt, width,
-            xerr=top.std_out_wgt / top.mean_out_wgt,
-            color='SkyBlue',
-            error_kw=dict(ecolor='black', lw=1, capsize=0, capthick=0),
-            label='not in gene set')
+    ax.axvline(x=1, **params.enrichment_thresh_line_props)
 
-    ax.margins(y=0.1)
+    ax.margins(y=0.2)
     maxy = max(top.mean_in_wgt / top.mean_out_wgt + top.std_in_wgt / top.mean_out_wgt)
-    ax.set_xlim((0, maxy))
-    ax.set_xticks([1,int(maxy/2)])
-    ax.set_xlabel('enrichment', fontsize=params.labelfontsize)
+    ax.set_xlim((0, max(ticks)))
+    ax.set_xticks(ticks)
+    ax.set_xticklabels([str(t)+'x' for t in ticks])
+    ax.set_xlabel('SLDP enrichment\nof gene set', fontsize=params.labelfontsize)
     ax.set_yticks([])
     ax.tick_params(**params.tickprops)
 

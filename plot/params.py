@@ -23,6 +23,12 @@ sig_thresh_line_props = {
         'linewidth':0.5,
         'alpha':0.8
         }
+enrichment_thresh_line_props = {
+        'color':'darkgray',
+        'linestyle':'-',
+        'linewidth':1,
+        'alpha':1
+        }
 qqprops = {
         's':1.5,
         'fontsize':labelfontsize,

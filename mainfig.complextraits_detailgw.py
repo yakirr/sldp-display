@@ -30,7 +30,7 @@ toplot = [
         ('UKB_460K.cov_EDU_YEARS','HaibGm12878Bcl11aPcr1x', 'BCL11A', 'LCL',
             (-1, 1, 1), (-4, 4, 4),
             (20, 21),
-            2, 60.5, 61,
+            2, 60.184, 61.280,
             60.684, 60.780,
             None,
             ['Bcl11a']),
@@ -43,7 +43,7 @@ toplot = [
             ['Ctcf','Rad21']),
         ('CD', 'SydhK562Irf1Ifng6h', 'IRF1', 'K562',
             (-1,1,1), (-2, 2, 3),
-            (20, 42),
+            (20, 21),
             5, 131.3, 132.323,
             131.817, 131.826,
             None,
@@ -102,7 +102,8 @@ for i,(pheno, annot, tf, cell_line,
     numbers = results_detail.enrichment(
             plt.subplot(gs[i, -enrichment_ncols:]),
             enrichments_file,
-            pheno, enrichment_tfs)
+            pheno, enrichment_tfs,
+            [1, 10, 20])
     numbers.to_excel(
             writer, chr(65+i)+'.3 Top enrichments',
             index=False)
