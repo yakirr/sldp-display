@@ -223,9 +223,12 @@ def enrichment(ax, enrichments, pheno, enrichment_tfs, ticks, num_enrichments=2)
     e = e[containstfs]
     e['x'] = e.mean_in_wgt / e.mean_out_wgt
     e['xabs'] = e.mean_in_wgt - e.mean_out_wgt
-    sortkey=['p_wgt','xabs']
+    # sortkey=['p_wgt','xabs']
+    sortkey=['q','xabs']
     print('sorting by', sortkey)
     top = e.sort_values(by=sortkey)[:2]
+    if len(top.geneset.unique()) == 1:
+        top = e.sort_values(by=sortkey).iloc[[0,2]]
 
     print(top[['target','p_wgt','mean_in_wgt','mean_out_wgt']])
     print()
