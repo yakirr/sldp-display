@@ -140,7 +140,8 @@ def segmented_bar(ax, passed, phenos, extra_dict, title, fontsize,
     # add the right order onto the annotation descriptions and sort
     myresults.desc = pd.Categorical(myresults.desc,
             info.category_order, ordered=True)
-    myresults.sort_values(['desc', 'gene'], ascending=[True, True], inplace=True)
+    myresults.sort_values(['desc', 'activatingness', 'gene'], ascending=[True, False, True],
+            inplace=True)
     # print basic info
     print(pd.DataFrame(myresults.gene.value_counts()).sort_index())
     print(len(myresults), 'total results')

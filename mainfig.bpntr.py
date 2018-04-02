@@ -11,7 +11,8 @@ from plot import params, results_overview; reload(results_overview)
 
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldprev+'/1.basset1tfs_p12/'
-outname = me+'/out/temp.pdf'
+# outname = me+'/out/mainfig.bpntr.raw.pdf'
+outname = '/n/scratch2/yar2/mainfig.bpntr.raw.pdf'
 
 ## aesthetics
 scatterprops_r = {
@@ -48,6 +49,7 @@ results = results_overview.init(
 results['activator'] = results.uniprot_activator & ~results.uniprot_repressor
 results['repressor'] = ~results.uniprot_activator & results.uniprot_repressor
 results['ambig'] = ~results.activator & ~results.repressor
+results['activatingness'] = 2*results.activator.astype(int) + results.ambig.astype(int)
 passed = results[results.passed].copy()
 
 ## make figure
@@ -55,25 +57,23 @@ passed = results[results.passed].copy()
 myresults = passed[passed.pheno.str.contains('gene') & ~passed.pheno.str.contains('NTR')]
 print(myresults.pheno.value_counts())
 nassoc = len(myresults)
-myresults = myresults.sort_values(by='rf').iloc[-100:]
-print(myresults[myresults.desc.isnull()].annot.unique())
+myresults = myresults.sort_values(by='p_fast').iloc[:100]
 results_overview.segmented_bar(ax1, myresults,
         ['BPh2g50sqrt_mono_gene_nor_combat',
             'BPh2g50sqrt_neut_gene_nor_combat',
             'BPh2g50sqrt_tcel_gene_nor_combat'],
-        {'activator':'r', 'repressor':'b', 'ambig':'gray'},
-        'Expression, BLUEPRINT ({} associations)'.format(nassoc),
+        {'activator':'r', 'repressor':'b', 'ambig':'#aaaaaa'},
+        'Expression, BLUEPRINT (top 100 of {} associations)'.format(nassoc),
         params.labelfontsize)
 
 # NTR gene exp
 myresults = passed[passed.pheno.str.contains('NTR')]
 print(myresults.pheno.value_counts())
 nassoc = len(myresults)
-myresults = myresults.sort_values(by='rf').iloc[-100:]
-print(myresults[myresults.desc.isnull()].annot.unique())
+myresults = myresults.sort_values(by='p_fast').iloc[:100]
 results_overview.segmented_bar(ax2, myresults,
         ['NTRh2g50sqrt_blood_gene'],
-        {'activator':'r', 'repressor':'b', 'ambig':'gray'},
+        {'activator':'r', 'repressor':'b', 'ambig':'#aaaaaa'},
         'Expression, NTR ({} associations)'.format(nassoc),
         params.labelfontsize)
 
@@ -81,28 +81,26 @@ results_overview.segmented_bar(ax2, myresults,
 myresults = passed[passed.pheno.str.contains('K4ME1')]
 print(myresults.pheno.value_counts())
 nassoc = len(myresults)
-myresults = myresults.sort_values(by='rf').iloc[-100:]
-print(myresults[myresults.desc.isnull()].annot.unique())
+myresults = myresults.sort_values(by='p_fast').iloc[:100]
 results_overview.segmented_bar(ax4, myresults,
         ['BPh2g50sqrt_neut_K4ME1_log2rpm',
             'BPh2g50sqrt_mono_K4ME1_log2rpm',
             'BPh2g50sqrt_tcel_K4ME1_log2rpm'],
-        {'activator':'r', 'repressor':'b', 'ambig':'gray'},
-        'H3K4me1, BLUEPRINT ({} associations)'.format(nassoc),
+        {'activator':'r', 'repressor':'b', 'ambig':'#aaaaaa'},
+        'H3K4me1, BLUEPRINT (top 100 of {} associations)'.format(nassoc),
         params.labelfontsize)
 
 # BP K27ac
 myresults = passed[passed.pheno.str.contains('K27AC')]
 print(myresults.pheno.value_counts())
 nassoc = len(myresults)
-myresults = myresults.sort_values(by='rf').iloc[-100:]
-print(myresults[myresults.desc.isnull()].annot.unique())
+myresults = myresults.sort_values(by='p_fast').iloc[:100]
 results_overview.segmented_bar(ax5, myresults,
         ['BPh2g50sqrt_neut_K27AC_log2rpm',
             'BPh2g50sqrt_mono_K27AC_log2rpm',
             'BPh2g50sqrt_tcel_K27AC_log2rpm'],
-        {'activator':'r', 'repressor':'b', 'ambig':'gray'},
-        'H3K27ac, BLUEPRINT ({} associations)'.format(nassoc),
+        {'activator':'r', 'repressor':'b', 'ambig':'#aaaaaa'},
+        'H3K27ac, BLUEPRINT (top 100 of {} associations)'.format(nassoc),
         params.labelfontsize)
 
 ## add global figure legend in bottom right
@@ -121,11 +119,11 @@ y = results[results.pheno.str.contains('NTR')].sort_values('annot')
 ax3.scatter(x[x.activator.values].z_fast, y[x.activator.values].z_fast, c='r',
         label='activating',
         **scatterprops_r)
+ax3.scatter(x[x.ambig.values].z_fast, y[x.ambig.values].z_fast, c='#aaaaaa',
+        label='ambiguous',
+        **scatterprops_b)
 ax3.scatter(x[x.repressor.values].z_fast, y[x.repressor.values].z_fast, c='b',
         label='repressing',
-        **scatterprops_b)
-ax3.scatter(x[x.ambig.values].z_fast, y[x.ambig.values].z_fast, c='gray',
-        label='ambig',
         **scatterprops_b)
 
 # add horizontal and vertical significance threshold lines
@@ -140,13 +138,15 @@ ax3.plot(np.unique(x.z_fast), np.poly1d(np.polyfit(x.z_fast, y.z_fast, 1))(np.un
 
 # add r2 text label
 r = np.corrcoef(x.z_fast, y.z_fast)[0,1]
-ax3.text(3, -2, r'$r = {:.2g}$'.format(r),
+ax3.text(3.5, -1.5, r'$r = {:.2g}$'.format(r),
         fontsize=params.labelfontsize, color='black')
 
 # add legend and format axes
-ax3.legend(fontsize=6, markerscale=2, borderpad=0.1,
-    labelspacing=0.4, columnspacing=0.1, handletextpad=0, loc='upper left')
-ax3.set_xticks([-2,0,2,4])
+ax3.legend(fontsize=6, markerscale=1.5, borderpad=0.05,
+    labelspacing=0.1, columnspacing=0.01, handletextpad=-0.5, loc=(-0.03,0.75))
+ax3.set_xlim(-3, 7)
+ax3.set_ylim(-2.1, 5)
+ax3.set_xticks([-2,0,2,4,6])
 ax3.set_yticks([-2,0,2,4])
 ax3.set_xlabel(r'BLUEPRINT z-score', fontsize=params.labelfontsize)
 ax3.set_ylabel(r'NTR z-score', fontsize=params.labelfontsize)
