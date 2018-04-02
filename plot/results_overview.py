@@ -7,7 +7,7 @@ import matplotlib.gridspec as gridspec
 import scipy.cluster.hierarchy as sch
 import pandas as pd
 import numpy as np
-import info, params
+import info, params; reload(info)
 
 volcanoprops = {
         'linewidth':0}
@@ -23,6 +23,7 @@ def get_color(annots, colorby, palette='hls', apply_to=None):
     if apply_to is None:
         apply_to = [True]*len(annots)
     apply_to = np.array(apply_to, dtype=bool)
+    apply_to &= annots[colorby].notnull()
 
     ncolors = len(annots.loc[apply_to, colorby].unique())
     print(ncolors, 'colors required')
@@ -131,7 +132,7 @@ def legend_contents(groupby):
 
     return patches
 
-def segmented_bar(ax, passed, phenos, extra_mask, extra_color, title, fontsize,
+def segmented_bar(ax, passed, phenos, extra_dict, title, fontsize,
         unmarked_color='b'):
     # filter to correct set of results
     mask = [p in phenos for p in passed.pheno]
@@ -146,11 +147,10 @@ def segmented_bar(ax, passed, phenos, extra_mask, extra_color, title, fontsize,
 
     # make bar chart
     for i,(_, row) in enumerate(myresults.iterrows()):
-        ax.barh(0, 1, 1, color=row.color, left=i, linewidth=0.2, edgecolor='white')
-        if row[extra_mask]:
-            ax.barh(1.1, 1, 0.2, color=extra_color, left=i, linewidth=0)
-        else:
-            ax.barh(1.1, 1, 0.2, color=unmarked_color, left=i, linewidth=0)
+        ax.barh(0, 1, 1.8, color=row.color, left=i, linewidth=0.2, edgecolor='white')
+        for field, color in extra_dict.items():
+            if row[field]:
+                ax.barh(1.1, 1, 0.2, color=color, left=i, linewidth=0)
     ax.set_ylim(0,1.3)
     ax.set_xlim(0, len(myresults))
 

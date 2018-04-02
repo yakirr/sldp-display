@@ -6,16 +6,21 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import scipy.cluster.hierarchy as sch
-import pyutils.fs as fs
+import ypy.fs as fs
 from plot import params, results_overview; reload(results_overview)
 
 me = os.path.dirname(os.path.abspath(__file__))
-indir = params.sldp+'/7.p9_a9/compiled_results/'
+indir = params.sldprev+'/1.basset1tfs_p12/'
 outname = me+'/out/temp.pdf'
 
 ## aesthetics
-scatterprops = {
-        'alpha':0.7,
+scatterprops_r = {
+        'alpha':0.8,
+        's':2.5,
+        'linewidth':0
+        }
+scatterprops_b = {
+        'alpha':0.5,
         's':2.5,
         'linewidth':0
         }
@@ -37,45 +42,67 @@ ax6 = plt.subplot(gs[2:,7:])
 ## get data
 global results, phenos
 results = results_overview.init(
-        [indir+'/p9.molecular.all'],
-        [indir+'/p9.molecular.fdr5'],
+        [indir+'/molecular_NTR/all.gwresults', indir+'/molecular_BP/all.gwresults'],
+        [indir+'/molecular_NTR/fdr5.gwresults', indir+'/molecular_BP/fdr5.gwresults'],
         'desc')
 results['activator'] = results.uniprot_activator & ~results.uniprot_repressor
+results['repressor'] = ~results.uniprot_activator & results.uniprot_repressor
+results['ambig'] = ~results.activator & ~results.repressor
 passed = results[results.passed].copy()
 
 ## make figure
 # BP gene exp
 myresults = passed[passed.pheno.str.contains('gene') & ~passed.pheno.str.contains('NTR')]
-results_overview.segmented_bar(ax1, passed,
-        ['BP_mono_gene_nor_combat_peer_10',
-            'BP_neut_gene_nor_combat_peer_10'],
-        'activator', 'r',
-        'Expression, BLUEPRINT ({} associations)'.format(len(myresults)),
+print(myresults.pheno.value_counts())
+nassoc = len(myresults)
+myresults = myresults.sort_values(by='rf').iloc[-100:]
+print(myresults[myresults.desc.isnull()].annot.unique())
+results_overview.segmented_bar(ax1, myresults,
+        ['BPh2g50sqrt_mono_gene_nor_combat',
+            'BPh2g50sqrt_neut_gene_nor_combat',
+            'BPh2g50sqrt_tcel_gene_nor_combat'],
+        {'activator':'r', 'repressor':'b', 'ambig':'gray'},
+        'Expression, BLUEPRINT ({} associations)'.format(nassoc),
         params.labelfontsize)
 
 # NTR gene exp
 myresults = passed[passed.pheno.str.contains('NTR')]
-results_overview.segmented_bar(ax2, passed,
-        ['geneexp_total_NTR'],
-        'activator', 'r',
-        'Expression, NTR ({} associations)'.format(len(myresults)),
+print(myresults.pheno.value_counts())
+nassoc = len(myresults)
+myresults = myresults.sort_values(by='rf').iloc[-100:]
+print(myresults[myresults.desc.isnull()].annot.unique())
+results_overview.segmented_bar(ax2, myresults,
+        ['NTRh2g50sqrt_blood_gene'],
+        {'activator':'r', 'repressor':'b', 'ambig':'gray'},
+        'Expression, NTR ({} associations)'.format(nassoc),
         params.labelfontsize)
 
 # BP K4me1
 myresults = passed[passed.pheno.str.contains('K4ME1')]
+print(myresults.pheno.value_counts())
+nassoc = len(myresults)
+myresults = myresults.sort_values(by='rf').iloc[-100:]
+print(myresults[myresults.desc.isnull()].annot.unique())
 results_overview.segmented_bar(ax4, myresults,
-        ['BP_neut_K4ME1_log2rpm_peer_10',
-            'BP_mono_K4ME1_log2rpm_peer_10'],
-        'activator', 'r',
-        'H3K4me1, BLUEPRINT ({} associations)'.format(len(myresults)),
+        ['BPh2g50sqrt_neut_K4ME1_log2rpm',
+            'BPh2g50sqrt_mono_K4ME1_log2rpm',
+            'BPh2g50sqrt_tcel_K4ME1_log2rpm'],
+        {'activator':'r', 'repressor':'b', 'ambig':'gray'},
+        'H3K4me1, BLUEPRINT ({} associations)'.format(nassoc),
         params.labelfontsize)
 
 # BP K27ac
 myresults = passed[passed.pheno.str.contains('K27AC')]
+print(myresults.pheno.value_counts())
+nassoc = len(myresults)
+myresults = myresults.sort_values(by='rf').iloc[-100:]
+print(myresults[myresults.desc.isnull()].annot.unique())
 results_overview.segmented_bar(ax5, myresults,
-        ['BP_neut_K27AC_log2rpm_peer_10'],
-        'activator', 'r',
-        'H3K27ac, BLUEPRINT ({} associations)'.format(len(myresults)),
+        ['BPh2g50sqrt_neut_K27AC_log2rpm',
+            'BPh2g50sqrt_mono_K27AC_log2rpm',
+            'BPh2g50sqrt_tcel_K27AC_log2rpm'],
+        {'activator':'r', 'repressor':'b', 'ambig':'gray'},
+        'H3K27ac, BLUEPRINT ({} associations)'.format(nassoc),
         params.labelfontsize)
 
 ## add global figure legend in bottom right
@@ -91,26 +118,29 @@ x = results[results.pheno.str.contains('neut') &
 y = results[results.pheno.str.contains('NTR')].sort_values('annot')
 
 # plot points
-ax3.scatter(x[x.activator.values].sf_z, y[x.activator.values].sf_z, c='r',
+ax3.scatter(x[x.activator.values].z_fast, y[x.activator.values].z_fast, c='r',
         label='activating',
-        **scatterprops)
-ax3.scatter(x[~x.activator.values].sf_z, y[~x.activator.values].sf_z, c='b',
-        label='other',
-        **scatterprops)
+        **scatterprops_r)
+ax3.scatter(x[x.repressor.values].z_fast, y[x.repressor.values].z_fast, c='b',
+        label='repressing',
+        **scatterprops_b)
+ax3.scatter(x[x.ambig.values].z_fast, y[x.ambig.values].z_fast, c='gray',
+        label='ambig',
+        **scatterprops_b)
 
 # add horizontal and vertical significance threshold lines
-threshy = np.min(y[y.passed].sf_z)
-threshx = np.min(x[x.passed].sf_z)
+threshy = np.min(y[y.passed].z_fast)
+threshx = np.min(x[x.passed].z_fast)
 ax3.axhline(y=threshy, **params.sig_thresh_line_props)
 ax3.axvline(x=threshx, **params.sig_thresh_line_props)
 
 # add trendline
-ax3.plot(np.unique(x.sf_z), np.poly1d(np.polyfit(x.sf_z, y.sf_z, 1))(np.unique(x.sf_z)),
+ax3.plot(np.unique(x.z_fast), np.poly1d(np.polyfit(x.z_fast, y.z_fast, 1))(np.unique(x.z_fast)),
         **trendlineprops)
 
 # add r2 text label
-r = np.corrcoef(x.sf_z, y.sf_z)[0,1]
-ax3.text(3, -2, '$r = {:.2g}$'.format(r),
+r = np.corrcoef(x.z_fast, y.z_fast)[0,1]
+ax3.text(3, -2, r'$r = {:.2g}$'.format(r),
         fontsize=params.labelfontsize, color='black')
 
 # add legend and format axes
