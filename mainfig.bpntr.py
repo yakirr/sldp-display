@@ -57,7 +57,7 @@ passed = results[results.passed].copy()
 myresults = passed[passed.pheno.str.contains('gene') & ~passed.pheno.str.contains('NTR')]
 print(myresults.pheno.value_counts())
 nassoc = len(myresults)
-myresults = myresults.sort_values(by='p_fast').iloc[:100]
+myresults = myresults.sort_values(by=['rf']).iloc[-100:]
 results_overview.segmented_bar(ax1, myresults,
         ['BPh2g50sqrt_mono_gene_nor_combat',
             'BPh2g50sqrt_neut_gene_nor_combat',
@@ -70,7 +70,7 @@ results_overview.segmented_bar(ax1, myresults,
 myresults = passed[passed.pheno.str.contains('NTR')]
 print(myresults.pheno.value_counts())
 nassoc = len(myresults)
-myresults = myresults.sort_values(by='p_fast').iloc[:100]
+myresults = myresults.sort_values(by=['rf']).iloc[-100:]
 results_overview.segmented_bar(ax2, myresults,
         ['NTRh2g50sqrt_blood_gene'],
         {'activator':'r', 'repressor':'b', 'ambig':'#aaaaaa'},
@@ -81,7 +81,7 @@ results_overview.segmented_bar(ax2, myresults,
 myresults = passed[passed.pheno.str.contains('K4ME1')]
 print(myresults.pheno.value_counts())
 nassoc = len(myresults)
-myresults = myresults.sort_values(by='p_fast').iloc[:100]
+myresults = myresults.sort_values(by=['rf']).iloc[-100:]
 results_overview.segmented_bar(ax4, myresults,
         ['BPh2g50sqrt_neut_K4ME1_log2rpm',
             'BPh2g50sqrt_mono_K4ME1_log2rpm',
@@ -94,7 +94,7 @@ results_overview.segmented_bar(ax4, myresults,
 myresults = passed[passed.pheno.str.contains('K27AC')]
 print(myresults.pheno.value_counts())
 nassoc = len(myresults)
-myresults = myresults.sort_values(by='p_fast').iloc[:100]
+myresults = myresults.sort_values(by=['rf']).iloc[-100:]
 results_overview.segmented_bar(ax5, myresults,
         ['BPh2g50sqrt_neut_K27AC_log2rpm',
             'BPh2g50sqrt_mono_K27AC_log2rpm',

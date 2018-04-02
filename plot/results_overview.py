@@ -143,7 +143,10 @@ def segmented_bar(ax, passed, phenos, extra_dict, title, fontsize,
     myresults.sort_values(['desc', 'activatingness', 'gene'], ascending=[True, False, True],
             inplace=True)
     # print basic info
-    print(pd.DataFrame(myresults.gene.value_counts()).sort_index())
+    counts = pd.DataFrame(myresults.gene.value_counts()).rename(columns={'gene':'count'})
+    details = myresults[['gene','activatingness','desc']].drop_duplicates(
+        ).sort_values(['desc','activatingness','gene'], ascending=[True, False, True])
+    print(pd.merge(details, counts, left_on='gene', right_index=True, how='left'))
     print(len(myresults), 'total results')
 
     # make bar chart
