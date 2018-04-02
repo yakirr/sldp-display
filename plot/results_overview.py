@@ -147,7 +147,7 @@ def segmented_bar(ax, passed, phenos, extra_dict, title, fontsize,
 
     # make bar chart
     for i,(_, row) in enumerate(myresults.iterrows()):
-        ax.barh(0, 1, 1.8, color=row.color, left=i, linewidth=0.2, edgecolor='white')
+        ax.barh(0, 1, 1, color=row.color, left=i, linewidth=0.2, edgecolor='white')
         for field, color in extra_dict.items():
             if row[field]:
                 ax.barh(1.1, 1, 0.2, color=color, left=i, linewidth=0)
