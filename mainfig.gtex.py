@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import scipy.stats as st
 import ypy.fs as fs
-from plot import params
+from plot import params, info
 
 me = os.path.dirname(os.path.abspath(__file__))
-indir = params.sldprev+'/1.basset1tfs_p12/molecular_gtexv7_tissue/'
+indir = params.sldprev+'/1.basset1tfs_p12/old_results/molecular_gtexv7_tissues/'
 outname = me+'/out/mainfig.gtex.raw.pdf'
 
 # set parameters
@@ -66,11 +66,9 @@ r = pd.merge(r, resid[['annot','pheno','tissue_specific']], how='left',
 ## read in metadata and merge in
 id2exp = pd.read_csv(params.sldp+'0.annotsummary/annotsummary.tsv', sep='\t')
 exp2gene = pd.read_csv(params.sldp+'0.annotsummary/experiment_to_gene.tsv', sep='\t')
-gtexnames = pd.read_csv(params.sumstats+'metadata/gtexv7_names.tsv',
-        sep='\t', header=None, names=['pheno', 'phenoname'])
 r = pd.merge(r, id2exp, on='id', how='left')
 r = pd.merge(r, exp2gene, on='experiment', how='left')
-r = pd.merge(r, gtexnames, on='pheno', how='left')
+r['phenoname'] = [info.phenotypes[p] for p in r.pheno]
 ## collapse different annots with same TF
 toplot = r.groupby(['gene','phenoname']).agg(
         {
