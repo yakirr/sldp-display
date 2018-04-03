@@ -11,8 +11,7 @@ from plot import params, results_overview; reload(results_overview)
 
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldprev+'/1.basset1tfs_p12/'
-# outname = me+'/out/mainfig.bpntr.raw.pdf'
-outname = '/n/scratch2/yar2/mainfig.bpntr.raw.pdf'
+outname = me+'/out/mainfig.bpntr.raw.pdf'
 
 ## aesthetics
 scatterprops_r = {

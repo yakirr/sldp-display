@@ -11,7 +11,7 @@ from plot import params
 
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldprev+'/1.basset1tfs_p12/molecular_gtexv7_tissue/'
-outname = me+'/out/mainfig.gtexheatmap.raw.pdf'
+outname = me+'/out/mainfig.gtex.raw.pdf'
 
 # set parameters
 nrows = 100; ncols = 100

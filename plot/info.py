@@ -54,19 +54,19 @@ phenotypes = {
         'UKB_460K.repro_MENARCHE_AGE' : 'Age at menarche',
         'UKB_460K.repro_MENOPAUSE_AGE' : 'Age at menopause',
 
-        'BP_mono_gene_nor_combat_peer_10' : 'GE (mono)',
-        'BP_mono_K27AC_log2rpm_peer_10' : 'K27ac (mono)',
-        'BP_mono_K4ME1_log2rpm_peer_10' : 'K4me1 (mono)',
-        'BP_mono_meth_M_peer_10' : 'methylation (mono)',
-        'BP_neut_gene_nor_combat_peer_10' : 'GE (neut)',
-        'BP_neut_K27AC_log2rpm_peer_10' : 'K27ac (neut)',
-        'BP_neut_K4ME1_log2rpm_peer_10' : 'K4me1 (neut)',
-        'BP_neut_meth_M_peer_10' : 'methylation (neut)',
-        'BP_tcel_gene_nor_combat_peer_10' : 'GE (T)',
-        'BP_tcel_K27AC_log2rpm_peer_10' : 'K27ac (T)',
-        'BP_tcel_K4ME1_log2rpm_peer_10' : 'K4me1 (T)',
-        'BP_tcel_meth_M_peer_10' : 'methylation (T)',
-        'geneexp_total_NTR' : 'GE (NTR)'
+        'BPh2g50sqrt_mono_gene_nor_combat' : 'GE (mono)',
+        'BPh2g50sqrt_mono_K27AC_log2rpm' : 'K27ac (mono)',
+        'BPh2g50sqrt_mono_K4ME1_log2rpm' : 'K4me1 (mono)',
+        'BPh2g50sqrt_mono_meth_M' : 'methylation (mono)',
+        'BPh2g50sqrt_neut_gene_nor_combat' : 'GE (neut)',
+        'BPh2g50sqrt_neut_K27AC_log2rpm' : 'K27ac (neut)',
+        'BPh2g50sqrt_neut_K4ME1_log2rpm' : 'K4me1 (neut)',
+        'BPh2g50sqrt_neut_meth_M' : 'methylation (neut)',
+        'BPh2g50sqrt_tcel_gene_nor_combat' : 'GE (T)',
+        'BPh2g50sqrt_tcel_K27AC_log2rpm' : 'K27ac (T)',
+        'BPh2g50sqrt_tcel_K4ME1_log2rpm' : 'K4me1 (T)',
+        'BPh2g50sqrt_tcel_meth_M' : 'methylation (T)',
+        'NTRh2g50sqrt_blood_gene' : 'GE (NTR)'
         }
 
 # compile metadata about experiments
