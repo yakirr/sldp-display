@@ -1,7 +1,7 @@
 from __future__ import print_function, division
 import pandas as pd
 import numpy as np
-import os
+import os, gc
 import ypy.fs as fs
 from plot import params, results_overview, tables, info
 
@@ -24,8 +24,10 @@ for p in phenos.index:
             pd.read_csv(params.sumstats + 'processed/' + p +'.KG3.95/' + str(c) + '.pss.gz',
                 sep='\t').Winv_ahat_I.notnull().sum()
             for c in range(1,23)])
+    phenos.loc[p, 'N'] = pinfo.loc[0,'Nbar']
+    gc.collect()
 phenos['Trait'] = [info.phenotypes[p] for p in phenos.index]
-phenos[['Trait', 'M']].to_excel(writer_list, 'Traits',
+phenos[['Trait', 'M', 'N']].to_excel(writer_list, 'Traits',
         index=False)
 
 def format_and_print(passed, sheet_name):
