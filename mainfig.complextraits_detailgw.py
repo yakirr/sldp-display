@@ -19,7 +19,7 @@ rc('text', usetex=True)
 
 me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/7.p9_a9/verboseresults/'
-enrichments_file = params.sldprev+'/6.complex_msigdb/significantenrichments.fdr5'
+enrichments_file = params.sldprev+'/6.complex_msigdb/fdr5.enrichments'
 genes_file = '../data/reference/genes/master_autosomes.tsv'
 outname = me+'/out/mainfig.complextraits_detailgw.raw.pdf'
 numerical_outname = me+'/out/xlsxtable.complextraits_detailgw.xlsx'
