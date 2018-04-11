@@ -122,6 +122,7 @@ phenotypes = {
 experiment_to_gene = pd.read_csv(annotinfodir + 'experiment_to_gene.tsv', sep='\t')
 gene_to_uniprotinfo = pd.read_csv(annotinfodir + 'gene_to_uniprotinfo.tsv', sep='\t')
 gene_to_category = pd.read_csv(annotinfodir + 'gene_to_category.tsv', sep=',')
+gene_to_ensembl = pd.read_csv(annotinfodir + 'gene_to_ensgid.txt', delim_whitespace=True)
 experiment_meta = pd.merge(experiment_to_gene,
         gene_to_uniprotinfo,
         on='gene', how='left')

@@ -50,6 +50,7 @@ results['repressor'] = ~results.uniprot_activator & results.uniprot_repressor
 results['ambig'] = ~results.activator & ~results.repressor
 results['activatingness'] = 2*results.activator.astype(int) + results.ambig.astype(int)
 passed = results[results.passed].copy()
+import pdb; pdb.set_trace()
 
 ## make figure
 # BP gene exp
