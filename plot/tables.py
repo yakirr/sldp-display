@@ -13,6 +13,8 @@ def format_p(p, latex=True):
 def format_sldp_results(results, latex=True):
     results['Trait'] = [info.phenotypes[p] for p in results.pheno]
     results.p = [format_p(x, latex) for x in results.p]
+    if 'q' in results.columns:
+        results.q = [format_p(x, latex) for x in results.q]
     results.rf = ['{:.1%}'.format(x).replace(
         '%',
         r'\%' if latex else r'%'

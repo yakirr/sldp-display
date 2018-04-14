@@ -177,15 +177,30 @@ def manhattan(fig, subplotspec, pheno, tf, c, start, end, gstart, gend,
                 columns={'pol_logp':'polarized -log10(p)',
                     'Z':'IRF1 expr Z-score'})
 
-def plot_q(ax, indir, pheno, annot):
-    annotname = annot+',diff,'+annot+',-1.R'
-    print(pheno, annot)
-    print(indir+pheno+'.'+annotname+'.toplot.gz')
+def num_loci(indir, pheno, annot, sign):
+    print(pheno, annot, sign)
+    chunks = pd.read_csv(indir+pheno+'.'+annot+'.chunks', sep='\t')
+    numbers = pd.DataFrame()
+    numbers['slope'] = np.sort(chunks.q.values)
+    numloci = 0
+    lim = max(np.abs(numbers.slope.min()), np.abs(numbers.slope.max()))
+
+    for t in np.arange(0, lim, lim/5):
+        total = (np.abs(numbers.slope)>t).sum()
+        numlociest = sign*((numbers.slope>t).sum() - (numbers.slope<-t).sum())
+        if numloci < numlociest:
+            numloci = numlociest
+    return numloci
+
+def plot_q(ax, indir, pheno, annot, sign):
+    annotname = annot + ',diff,'+annot+',-1.R'
+    print(pheno, annot, sign)
     chunks = pd.read_csv(indir+pheno+'.'+annotname+'.chunks', sep='\t')
     numbers = pd.DataFrame()
     numbers['slope'] = np.sort(chunks.q.values)
     half = np.argmin(numbers.slope**2)
     percent = (numbers.slope > 0).sum()/len(numbers)
+    percentagree = (np.sign(chunks.q) == sign).sum() / chunks.q.notnull().sum()
     lim = max(np.abs(numbers.slope.min()), np.abs(numbers.slope.max()))
 
     bardata = pd.DataFrame()
@@ -214,6 +229,8 @@ def plot_q(ax, indir, pheno, annot):
     ax.legend(loc='upper left', fontsize=5, handlelength=0.7, handleheight=0.5, borderpad=0.1,
             labelspacing=0.1, columnspacing=0.1)
     ax.tick_params(**dict(params.tickprops, labelsize=6))
+
+    return percentagree
 
 def enrichment(ax, enrichments, pheno, enrichment_tfs, ticks, num_enrichments=2):
     print('reading enrichments and filtering')
