@@ -15,9 +15,9 @@ enrichments['Trait'] = ['.'.join(t.split('.')[:-1]) for t in enrichments.target]
 enrichments['Annotation'] = enrichments.target.str.split('.').str.get(-1)
 
 # sort enrichments
-enrichments['xabs'] = enrichments.mean_in_wgt/enrichments.mean_out_wgt
-sortkey=['Trait','Annotation','q','xabs']
-sortkey=['q','xabs']
+enrichments['x'] = enrichments.mean_in_wgt/enrichments.mean_out_wgt
+sortkey=['Trait','Annotation','q','x']
+sortkey=['q','x']
 print('sorting by', sortkey)
 enrichments = enrichments.sort_values(by=sortkey, ascending=[True,False])
 
