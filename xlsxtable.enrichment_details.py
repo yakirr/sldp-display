@@ -23,9 +23,7 @@ enrichments = enrichments.sort_values(by=sortkey, ascending=[True,False])
 
 # format limiting p-values
 enrichments.loc[enrichments.p_wgt == 0, 'p_wgt'] = '<1e-6'
-# enrichments.loc[enrichments.q == 0, 'q'] = '-'
-enrichments.loc[enrichments.q == 0, 'q'] = [ 1e-6*nt for nt in
-        enrichments.loc[enrichments.q == 0, 'numtests']]
+enrichments.loc[enrichments.q == 0, 'q'] = '-'
 
 # add annotation metadata
 enrichments = pd.merge(enrichments, info.annots[['annot','origin','cell_line','gene']],

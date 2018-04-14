@@ -17,7 +17,7 @@ results = results_overview.init(
         [infile+'/fdr5_indep.sub_ng.gwresults'],
         [infile+'/fdr5_indep.sub_ng.gwresults'],
         'cell_line').sort_values('p')
-results[r'\# sites'] = [
+results[r'Min. \# sites'] = [
         int(results_detail.num_loci(indirldblocks, r.pheno, r.annot, np.sign(r.rf)))
         for _, r in results.iterrows()]
 
