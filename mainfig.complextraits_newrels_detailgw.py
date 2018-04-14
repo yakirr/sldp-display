@@ -103,7 +103,7 @@ for i,(pheno, annot, tf, cell_line,
             plt.subplot(gs[i, -enrichment_ncols:]),
             enrichments_file,
             pheno, enrichment_tfs,
-            [1, 15, 30])
+            [1, 15, 30], 30)
     numbers.to_excel(
             writer, chr(65+i)+'.3 Top enrichments',
             index=False)

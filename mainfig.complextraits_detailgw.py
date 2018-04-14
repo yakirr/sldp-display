@@ -8,7 +8,7 @@ import matplotlib.gridspec as gridspec
 from matplotlib.ticker import FormatStrFormatter
 import ypy.fs as fs
 import statutils.vis as vis
-from plot import params, results_detail
+from plot import params, results_detail; reload(results_detail)
 
 # set up latex text handling
 from matplotlib import rc
@@ -34,13 +34,6 @@ toplot = [
             60.684, 60.780,
             None,
             ['Bcl11a']),
-        ('PASS_Lupus','SydhK562CtcfbIggrab', 'CTCF', 'K562',
-            (-5, 5, 1), (-2, 2, 3),
-            (20, 21),
-            16, 67.096, 68.173,
-            67.596, 67.673,
-            None,
-            ['Ctcf','Rad21']),
         ('CD', 'SydhK562Irf1Ifng6h', 'IRF1', 'K562',
             (-1,1,1), (-2, 2, 3),
             (20, 21),
@@ -48,6 +41,13 @@ toplot = [
             131.817, 131.826,
             None,
             ['Irf1']),
+        ('PASS_Lupus','SydhK562CtcfbIggrab', 'CTCF', 'K562',
+            (-5, 5, 1), (-2, 2, 3),
+            (20, 21),
+            16, 67.096, 68.173,
+            67.596, 67.673,
+            None,
+            ['Ctcf','Rad21']),
         ]
 nrows = 3; ncols = 100
 ahat_Rv_plot_ncols = 26
@@ -103,7 +103,7 @@ for i,(pheno, annot, tf, cell_line,
             plt.subplot(gs[i, -enrichment_ncols:]),
             enrichments_file,
             pheno, enrichment_tfs,
-            [1, 10, 20])
+            [1, 10, 20], 25)
     numbers.to_excel(
             writer, chr(65+i)+'.3 Top enrichments',
             index=False)

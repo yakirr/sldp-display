@@ -232,7 +232,7 @@ def plot_q(ax, indir, pheno, annot, sign):
 
     return percentagree
 
-def enrichment(ax, enrichments, pheno, enrichment_tfs, ticks, num_enrichments=2):
+def enrichment(ax, enrichments, pheno, enrichment_tfs, ticks, maxx):
     print('reading enrichments and filtering')
     e = pd.read_csv(enrichments, sep='\t')
     e = e[e.target.str.contains(pheno)]
@@ -241,12 +241,16 @@ def enrichment(ax, enrichments, pheno, enrichment_tfs, ticks, num_enrichments=2)
     e['x'] = e.mean_in_wgt / e.mean_out_wgt
     e['xabs'] = e.mean_in_wgt - e.mean_out_wgt
     # sortkey=['p_wgt','xabs']
-    sortkey=['q','xabs']
+    sortkey=['q','x']
     print('sorting by', sortkey)
-    top = e.sort_values(by=sortkey)[:2]
+    top = e.sort_values(by=sortkey, ascending=[True,False])[:2]
     if len(top.geneset.unique()) == 1:
         top = e.sort_values(by=sortkey).iloc[[0,2]]
 
+    # reverse order of top two results so that bar plot looks right
+    top = top.iloc[::-1]
+
+    # print results
     print(top[['target','p_wgt','mean_in_wgt','mean_out_wgt']])
     print()
     print([(g,z) for g,z in zip(top.geneset, top.x)])
@@ -263,8 +267,7 @@ def enrichment(ax, enrichments, pheno, enrichment_tfs, ticks, num_enrichments=2)
     ax.axvline(x=1, **params.enrichment_thresh_line_props)
 
     ax.margins(y=0.2)
-    maxy = max(top.mean_in_wgt / top.mean_out_wgt + top.std_in_wgt / top.mean_out_wgt)
-    ax.set_xlim((0, max(ticks)))
+    ax.set_xlim((0, maxx))
     ax.set_xticks(ticks)
     ax.set_xticklabels([str(t)+'x' for t in ticks])
     ax.set_xlabel('SLDP enrichment\nof gene set', fontsize=params.labelfontsize)
