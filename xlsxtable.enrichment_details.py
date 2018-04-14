@@ -6,7 +6,7 @@ from plot import params, results_overview, tables, info
 
 me = os.path.dirname(os.path.abspath(__file__))
 enrichments_file = params.sldprev+'/6.complex_msigdb/fdr5.enrichments'
-outname_numerical = me+'/out/xlsxtable.enrichment_details.xlsx'
+outname_numerical = me+'/out/xlsxtable.enrichment_details.raw.xlsx'
 writer_numerical = pd.ExcelWriter(outname_numerical)
 
 # read in enrichment results and split into traits and annotations and format p-values
@@ -46,7 +46,7 @@ enrichments = enrichments[['Trait','gene','cell_line','origin',
                 })
 
 enrichments.to_excel(
-        writer_numerical, 'A. MSigDB enrichments',
+        writer_numerical, 'B. All MSigDB enrichments',
         index=False)
 
 ## save
