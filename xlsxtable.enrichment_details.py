@@ -31,13 +31,14 @@ enrichments = pd.merge(enrichments, info.annots[['annot','origin','cell_line','g
         how='left')
 
 enrichments = enrichments[['Trait','gene','cell_line','origin',
-                            'geneset','mean_in_wgt','mean_out_wgt',
+                            'geneset','x','mean_in_wgt','mean_out_wgt',
                             'std_in_wgt','std_out_wgt','p_wgt','q']].rename(
             columns={
                 'gene':'TF',
                 'cell_line':'Cell line',
                 'origin':'Lab',
                 'geneset':'Gene set',
+                'x':'Enrichment',
                 'mean_in_wgt':'Avg covariance in set',
                 'mean_out_wgt':'Avg covariance outside set',
                 'std_in_wgt':'Std error(Avg in set)',

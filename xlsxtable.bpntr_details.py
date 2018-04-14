@@ -14,20 +14,20 @@ outname_details = me+'/out/xlsxtable.bpntr_results.xlsx'
 writer_details = pd.ExcelWriter(outname_details)
 
 
-## part 0
-# print('PART 0')
-# phenos = pd.read_csv(sumstats, header=None, names=['pheno']).set_index('pheno')
-# for p in phenos.index:
-#     print('getting info for', p)
-#     pinfo = pd.read_csv(params.sumstats + 'processed/' + p + '.KG3.95/info', sep='\t')
-#     phenos.loc[p, 'M'] = sum([
-#             pd.read_csv(params.sumstats + 'processed/' + p +'.KG3.95/' + str(c) + '.pss.gz',
-#                 sep='\t').Winv_ahat_I.notnull().sum()
-#             for c in range(1,23)])
-# phenos['Trait'] = [info.phenotypes[p] for p in phenos.index]
-# phenos.Trait = phenos.Trait.str.replace('GE','gene expression')
-# phenos[['Trait', 'M']].to_excel(writer_list, 'Traits',
-#         index=False)
+# part 0
+print('PART 0')
+phenos = pd.read_csv(sumstats, header=None, names=['pheno']).set_index('pheno')
+for p in phenos.index:
+    print('getting info for', p)
+    pinfo = pd.read_csv(params.sumstats + 'processed/' + p + '.KG3.95/info', sep='\t')
+    phenos.loc[p, 'M'] = sum([
+            pd.read_csv(params.sumstats + 'processed/' + p +'.KG3.95/' + str(c) + '.pss.gz',
+                sep='\t').Winv_ahat_I.notnull().sum()
+            for c in range(1,23)])
+phenos['Trait'] = [info.phenotypes[p] for p in phenos.index]
+phenos.Trait = phenos.Trait.str.replace('GE','gene expression')
+phenos[['Trait', 'M']].to_excel(writer_list, 'Traits',
+        index=False)
 
 def format_and_print(passed, sheet_name):
     # format
@@ -131,6 +131,6 @@ print(len(passed[['Trait','gene']].drop_duplicates()), 'distinct trait gene pair
 print()
 
 
-## save
-# writer_details.save()
-# writer_list.save()
+# save
+writer_details.save()
+writer_list.save()
