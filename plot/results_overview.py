@@ -38,7 +38,7 @@ def get_color(annots, colorby, palette='hls', apply_to=None):
     return [colordict[x] for x in annots[colorby]]
 
 # load up information for plot
-def init(all_results, fdr_results, colorby, palette='hls'):
+def init(all_results, fdr_results, colorby, palette='hls', force_all_phenos=False):
     # read in results and merge in fdr information
     fdr = format_annot_names(
             pd.concat([pd.read_csv(f, sep='\t') for f in fdr_results], axis=0))
@@ -59,9 +59,14 @@ def init(all_results, fdr_results, colorby, palette='hls'):
 
     # merge everything
     results = pd.merge(results, info.annots, on='annot', how='inner')
-    phenos = results.loc[results.passed].pheno.unique()
+    # decide whether to keep just phenos with hits, or all phenos
+    if force_all_phenos:
+        phenos = results.pheno.unique()
+    else:
+        phenos = results.loc[results.passed].pheno.unique()
     results = pd.merge(results, pd.DataFrame(phenos, columns=['pheno']),
             on='pheno', how='inner')
+
     print(len(results.pheno.unique()), 'phenos',
             len(results.annot.unique()), 'annots',
             len(results), 'results')
