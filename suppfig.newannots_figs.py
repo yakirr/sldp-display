@@ -138,7 +138,7 @@ traitsets = [
 # comparison of z-scores
 print('deepsea z-scores')
 ## set up figure
-outname = me+'/out/suppfig.deepsea_zscores.png'; dpi=500
+outname = me+'/out/suppfig.deepsea_zscores.png'; dpi=300
 fig = plt.figure(figsize=(6,6))
 gs = gridspec.GridSpec(2,2)
 ax1 = plt.subplot(gs[0,0])
@@ -209,7 +209,7 @@ traitsets = [
 # comparison of z-scores
 print('hocomoco z-scores')
 ## set up figure
-outname = me+'/out/suppfig.motif_zscores.png'; dpi=500
+outname = me+'/out/suppfig.motif_zscores.png'; dpi=300
 fig = plt.figure(figsize=(6,6))
 gs = gridspec.GridSpec(2,2)
 ax1 = plt.subplot(gs[0,0])
@@ -223,7 +223,7 @@ for ax, record  in zip([ax1, ax2, ax3, ax4], traitsets):
 sns.despine()
 plt.tight_layout()
 fs.makedir_for_file(outname)
-plt.savefig(outname); plt.close()
+plt.savefig(outname, dpi=dpi); plt.close()
 
 # annotcorr vs sldpcorr
 print('hocomoco sldpcorr')
