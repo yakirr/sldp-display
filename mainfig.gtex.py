@@ -16,37 +16,41 @@ outname = me+'/out/mainfig.gtex.raw.pdf'
 # set parameters
 nrows = 100; ncols = 100
 highlightedtfs = [
-        'EBF1',
-        'HNF4A',
-        'HNF4G',
         'FOXA1',
-        'MAFF',
         'FOXA2',
-        'CEBPB',
-        'CTCF',
+        'EBF1',
+        'HNF4G',
+        'HNF4A',
         'PU1',
         'FOS',
-        'GABPA',
         'TBP',
-        'YY1',
         'TAF1',
-        'POL2'
+        'POL2',
+
+        'GABPA',
+        'CEBPB',
+        'MAFF',
+        'CTCF',
+        'YY1'
         ]
 highlightedtissues = [
-        'Brain (sub. nig.)',
-        'Brain (putamen)',
         'Pancreas',
-        'Skeletal muscle',
-        'SM Artery (aorta)',
         'GI (liver)',
-        'Lymphocytes',
         'GI (stomach)',
+        'Lymphocytes',
         'Spleen',
-        'Fibroblasts'
+        'Fibroblasts',
+        'Tibial nerve',
+
+        'SM Artery (aorta)',
+        'Brain (sub. nig.)',
+        'Skeletal muscle',
+        'Brain (putamen)',
+        'SM Artery (tibial)'
         ]
 
 # set up figure
-fig = plt.figure(figsize=(6,3.6))
+fig = plt.figure(figsize=(4.06,7.1))
 gs = gridspec.GridSpec(nrows,ncols)
 
 # get data
@@ -90,22 +94,25 @@ tab = tab.sort_values(by=['count', 'phenoname']).drop(['count', 'phenoname'], ax
 tab_resid = toplot.pivot(
         index='gene', columns='phenoname', values='tissue_specific').fillna(0).T
 tab_resid = tab_resid.loc[tab.index][tab.columns]
+## rotate tables to flip figure
+tab = tab.T
+tab_resid = tab_resid.T
 
 ## plot heatmap
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-ax = plt.subplot(gs[:95,:])
+ax = plt.subplot(gs[:,:95])
 # cax = plt.subplot(gs[95:,30:70])
 cb = ax.matshow(tab.values, interpolation='nearest', vmin=-7, vmax=7,
         cmap='bwr', aspect='equal')
 divider = make_axes_locatable(ax)
-cax = divider.append_axes("bottom", size="5%", pad=0.05)
-cax.set_aspect(aspect=0.1)
+cax = divider.append_axes("right", size="5%", pad=0.05)
+cax.set_aspect(aspect=10)
 ## Major ticks
 ax.set_xticks(range(len(tab.columns)))
 ax.set_yticks(range(len(tab)))
 ## Labels for major ticks
-ax.set_xticklabels(tab.columns, rotation=90, fontsize=4)
-ax.set_yticklabels(tab.index, fontsize=4)
+ax.set_xticklabels(tab.columns, rotation=90, fontsize=5.5)
+ax.set_yticklabels(tab.index, fontsize=5.5)
 ## Minor ticks
 ax.set_xticks(np.arange(-.5, len(tab.columns), 1), minor=True);
 ax.set_yticks(np.arange(-.5, len(tab), 1), minor=True);
@@ -127,16 +134,17 @@ asterisks_y, asterisks_x = np.where(tab_resid)
 ax.scatter(asterisks_x, asterisks_y, s=0.2, facecolors='none', edgecolors='black', linewidth=0.5)
 ## make highlighted relationships have bold labels
 for l in ax.get_xticklabels() + ax.get_yticklabels():
+    print('='+l.get_text()+'=')
     if l.get_text() in highlightedtfs+highlightedtissues:
         l.set_weight('extra bold')
 ## axis limits
 ax.set_xlim(0-0.5, len(tab.columns)-0.5)
 ax.set_ylim(len(tab.index)-0.5, 0-0.5)
 ## color bar
-cax.tick_params(size=0, labelsize=5, pad=3)
-cb = fig.colorbar(cb, cax=cax, ticks=[-7,0,7], orientation='horizontal')
-cb.ax.set_yticklabels([r'$\leq -7$',r'$0$',r'$\geq 7$'])
-cb.set_label(label=r'$-\log_{10}(p)$ (polarized)', fontsize=5, labelpad=2)
+cax.tick_params(size=0, labelsize=6, pad=3)
+cb = fig.colorbar(cb, cax=cax, ticks=[-7,0,7])
+cb.ax.set_yticklabels([r'$-7$',r'$0$',r'$7$'])
+cb.set_label(label=r'$-\log_{10}(p)$ (polarized)', fontsize=6, labelpad=2)
 cb.outline.set_linewidth(0.05)
 
 # finish up (without despine)
