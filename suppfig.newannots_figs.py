@@ -33,8 +33,8 @@ def zscore_plot(ax, title, oth_name, ba_allres, ba_fdrres, oth_allres, oth_fdrre
     ax.scatter(both[mask].z_x, both[mask].z_y, s=2, alpha=0.2, c='blue')
     ax.scatter(both[both.sig_ba].z_x, both[both.sig_ba].z_y, color='red', alpha=0.5, s=4)
     vmin = -5; vmax = 5
-    ax.axhline(y=1.96, xmin=vmin, xmax=vmax, **params.sig_thresh_line_props)
-    ax.axhline(y=-1.96, xmin=vmin, xmax=vmax, **params.sig_thresh_line_props)
+    # ax.axhline(y=1.96, xmin=vmin, xmax=vmax, **params.sig_thresh_line_props)
+    # ax.axhline(y=-1.96, xmin=vmin, xmax=vmax, **params.sig_thresh_line_props)
     ax.plot([vmin, vmax], [vmin, vmax], **params.sig_thresh_line_props)
     ax.text(-4.25, 4, r'$r = {:.2g}$'.format(corr), fontsize=params.labelfontsize+1)
     ax.set_xlim(vmin, vmax); ax.set_ylim(vmin, vmax)
@@ -138,7 +138,7 @@ traitsets = [
 # comparison of z-scores
 print('deepsea z-scores')
 ## set up figure
-outname = me+'/out/suppfig.deepsea_zscores.pdf'
+outname = me+'/out/suppfig.deepsea_zscores.png'; dpi=500
 fig = plt.figure(figsize=(6,6))
 gs = gridspec.GridSpec(2,2)
 ax1 = plt.subplot(gs[0,0])
@@ -152,7 +152,7 @@ for ax, record  in zip([ax1, ax2, ax3, ax4], traitsets):
 sns.despine()
 plt.tight_layout()
 fs.makedir_for_file(outname)
-plt.savefig(outname); plt.close()
+plt.savefig(outname, dpi=dpi); plt.close()
 
 # annotcorr vs sldpcorr
 print('deepsea sldpcorr')
@@ -209,7 +209,7 @@ traitsets = [
 # comparison of z-scores
 print('hocomoco z-scores')
 ## set up figure
-outname = me+'/out/suppfig.motif_zscores.pdf'
+outname = me+'/out/suppfig.motif_zscores.png'; dpi=500
 fig = plt.figure(figsize=(6,6))
 gs = gridspec.GridSpec(2,2)
 ax1 = plt.subplot(gs[0,0])
