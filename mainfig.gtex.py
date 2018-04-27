@@ -131,20 +131,20 @@ for axis in ['top','bottom','left','right']:
 ax.grid(which='minor', color='gray', linestyle='-', linewidth=0.1)
 ## place asterisks on tissue-specific results
 asterisks_y, asterisks_x = np.where(tab_resid)
-ax.scatter(asterisks_x, asterisks_y, s=0.2, facecolors='none', edgecolors='black', linewidth=0.5)
+ax.scatter(asterisks_x, asterisks_y, s=0.8, facecolors='none', edgecolors='black',
+        linewidth=1.0)
 ## make highlighted relationships have bold labels
 for l in ax.get_xticklabels() + ax.get_yticklabels():
-    print('='+l.get_text()+'=')
     if l.get_text() in highlightedtfs+highlightedtissues:
         l.set_weight('extra bold')
 ## axis limits
 ax.set_xlim(0-0.5, len(tab.columns)-0.5)
 ax.set_ylim(len(tab.index)-0.5, 0-0.5)
 ## color bar
-cax.tick_params(size=0, labelsize=6, pad=3)
+cax.tick_params(size=0, labelsize=7, pad=3)
 cb = fig.colorbar(cb, cax=cax, ticks=[-7,0,7])
 cb.ax.set_yticklabels([r'$-7$',r'$0$',r'$7$'])
-cb.set_label(label=r'$-\log_{10}(p)$ (polarized)', fontsize=6, labelpad=2)
+cb.set_label(label=r'$-\log_{10}(p)$ (polarized)', fontsize=params.labelfontsize, labelpad=2)
 cb.outline.set_linewidth(0.05)
 
 # finish up (without despine)
