@@ -10,7 +10,7 @@ import ypy.fs as fs
 import statutils.vis as vis
 from plot import params, results_detail; reload(results_detail)
 
-# set up latex text handling
+# set up latex text handling. NOTE: if running on O2, remove this code
 from matplotlib import rc
 rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 ## for Palatino and other serif fonts use:

@@ -10,7 +10,7 @@ import ypy.fs as fs
 import statutils.vis as vis
 from plot import params, results_detail
 
-# set up latex text handling
+# set up latex text handling. NOTE: if running on O2, remove this code
 from matplotlib import rc
 rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 ## for Palatino and other serif fonts use:
@@ -113,7 +113,7 @@ sns.despine()
 gs.tight_layout(fig)
 
 print('saving figure and writing numerical results')
+writer.save()
 fs.makedir_for_file(outname)
 plt.savefig(outname)
 plt.close()
-writer.save()
