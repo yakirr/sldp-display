@@ -21,28 +21,28 @@ me = os.path.dirname(os.path.abspath(__file__))
 indir = params.sldp+'/7.p9_a9/verboseresults/'
 enrichments_file = params.sldprev+'/6.complex_msigdb/fdr5.enrichments'
 genes_file = '../data/reference/genes/master_autosomes.tsv'
-outname = me+'/out/mainfig.complextraits_detailgw.raw.pdf'
-numerical_outname = me+'/out/xlsxtable.complextraits_detailgw.xlsx'
+outname = me+'/out/suppfig.complextraits_additional_detailgw.raw.pdf'
+numerical_outname = me+'/out/xlsxtable.complextraits_additional_detailgw.xlsx'
 writer = pd.ExcelWriter(numerical_outname)
 
 # set parameters
 toplot = [
-        ('UKB_460K.cov_EDU_YEARS','HaibGm12878Bcl11aPcr1x', 'BCL11A', 'LCL',
-            (-1, 1, 1), (-4, 4, 4),
+        ('PASS_Lupus','SydhK562CtcfbIggrab', 'CTCF', 'K562',
+            (-5, 5, 1), (-2, 2, 3),
             (20, 21),
-            2, 60.184, 61.280,
-            60.684, 60.780,
+            16, 67.096, 68.173,
+            67.596, 67.673,
             None,
-            ['Bcl11a']),
-        ('CD', 'SydhK562Irf1Ifng6h', 'IRF1', 'K562',
-            (-1,1,1), (-2, 2, 3),
+            ['Ctcf','Rad21']),
+        ('CD','SydhGm18951Pol2Iggmus', 'POL2', 'GM18951',
+            (-1.2, 1.2, 1), (-2.2, 2.2, 3),
             (20, 21),
-            5, 131.3, 132.323,
-            131.817, 131.826,
+            19, 0.586578, 1.595391,
+            1.086578, 1.095391,
             None,
-            ['Irf1']),
+            ['Pol2','Tbp','Taf1']),
         ]
-nrows = 2; ncols = 100
+nrows = 3; ncols = 100
 ahat_Rv_plot_ncols = 26
 manhattan_ncols = int(1.5*ahat_Rv_plot_ncols)
 enrichment_ncols = 30

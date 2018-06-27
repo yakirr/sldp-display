@@ -41,15 +41,8 @@ toplot = [
             53.773979, 53.810226,
             None,
             ['Sp1']),
-        ('CD','SydhGm18951Pol2Iggmus', 'POL2', 'GM18951',
-            (-1.2, 1.2, 1), (-2.2, 2.2, 3),
-            (20, 21),
-            19, 0.586578, 1.595391,
-            1.086578, 1.095391,
-            None,
-            ['Pol2','Tbp','Taf1'])
         ]
-nrows = 3; ncols = 100
+nrows = 2; ncols = 100
 ahat_Rv_plot_ncols = 26
 manhattan_ncols = int(1.5*ahat_Rv_plot_ncols)
 enrichment_ncols = 30
