@@ -27,10 +27,14 @@ def get_color(annots, colorby, palette='hls', apply_to=None):
 
     ncolors = len(annots.loc[apply_to, colorby].unique())
     print(ncolors, 'colors required')
-    colors = sns.color_palette(
-            palette,
-            ncolors
-            )
+
+    if type(palette) == str:
+        colors = sns.color_palette(
+                palette,
+                ncolors
+                )
+    else:
+        colors = palette[:ncolors]
     colordict = {a:nonsig_color for a in annots.loc[~apply_to, colorby].unique()}
     colordict.update(dict(zip(
         annots.loc[apply_to, colorby].unique(),
@@ -38,6 +42,8 @@ def get_color(annots, colorby, palette='hls', apply_to=None):
     return [colordict[x] for x in annots[colorby]]
 
 # load up information for plot
+# palette can either be a string specifying a matplotlib color palette (e.g., 'hls')
+#   or it can be an array of actual rgb tuples to use
 def init(all_results, fdr_results, colorby, palette='hls', force_all_phenos=False):
     # read in results and merge in fdr information
     fdr = format_annot_names(

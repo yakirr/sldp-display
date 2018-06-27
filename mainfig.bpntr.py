@@ -39,18 +39,29 @@ ax5 = plt.subplot(gs[3,:7])
 ax3 = plt.subplot(gs[:2,7:])
 ax6 = plt.subplot(gs[2:,7:])
 
+## define colorblind color palette
+palette = [
+        (213/256, 75/256, 0), #vermillion
+        (86/256, 180/256, 233/256), #skyblue
+        (240/256, 228/256, 66/256), #yellow
+        (0, 158/256, 115/256), #bluishgreen
+        (204/256, 121/256, 167/256), #reddishpurple
+        (230/256, 159/256, 0), #orange
+        (0, 114/256, 178/256), # blue
+        ]
+
 ## get data
 global results, phenos
 results = results_overview.init(
         [indir+'/molecular_NTR/all.gwresults', indir+'/molecular_BP/all.gwresults'],
         [indir+'/molecular_NTR/fdr5.gwresults', indir+'/molecular_BP/fdr5.gwresults'],
-        'desc')
+        'desc',
+        palette=palette)
 results['activator'] = results.uniprot_activator & ~results.uniprot_repressor
 results['repressor'] = ~results.uniprot_activator & results.uniprot_repressor
 results['ambig'] = ~results.activator & ~results.repressor
 results['activatingness'] = 2*results.activator.astype(int) + results.ambig.astype(int)
 passed = results[results.passed].copy()
-import pdb; pdb.set_trace()
 
 ## make figure
 # BP gene exp
