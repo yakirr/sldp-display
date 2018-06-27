@@ -105,7 +105,7 @@ def power_plot(ax, indir, desc, weights, refpanel,
     ax.errorbar(power['truth'], power.power,
             yerr=power.power_se,
             **powererrorbarprops)
-    ax.set_ylabel('Power ($\\alpha=0.05$)', fontsize=labelfontsize)
+    ax.set_ylabel('Power ($\\alpha=0.05$)', fontsize=labelfontsize, labelpad=15)
 
     return power[['truth','power','power_se']].rename(
             columns={'truth':truthcolname,

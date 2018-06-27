@@ -2,7 +2,7 @@ from __future__ import print_function, division
 import numpy as np
 import os
 import pandas as pd
-import pyutils.fs as fs
+import ypy.fs as fs
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import seaborn as sns
@@ -40,10 +40,10 @@ desc='maf5'
 refpanel='KG3.wim9nm'
 
 ## set up figure
-fig = plt.figure(figsize=(5,2.5))
-gs = gridspec.GridSpec(1,2)
+fig = plt.figure(figsize=(2.7, 4.9))
+gs = gridspec.GridSpec(2, 1)
 ax1 = plt.subplot(gs[0,0])
-ax2 = plt.subplot(gs[0,1])
+ax2 = plt.subplot(gs[1,0])
 
 ## create power plot for part a
 print('making power plot')
