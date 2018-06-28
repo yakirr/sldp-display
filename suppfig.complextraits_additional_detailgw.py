@@ -42,13 +42,13 @@ toplot = [
             None,
             ['Pol2','Tbp','Taf1']),
         ]
-nrows = 3; ncols = 100
+nrows = 2; ncols = 100
 ahat_Rv_plot_ncols = 26
 manhattan_ncols = int(1.5*ahat_Rv_plot_ncols)
 enrichment_ncols = 30
 
 # set up figure
-height_in=4
+height_in=(2/3)*4
 width_in=ncols/(ahat_Rv_plot_ncols*nrows)*height_in
 print('width =', width_in)
 fig = plt.figure(figsize=(width_in,height_in))
@@ -96,7 +96,7 @@ for i,(pheno, annot, tf, cell_line,
             plt.subplot(gs[i, -enrichment_ncols:]),
             enrichments_file,
             pheno, enrichment_tfs,
-            [1, 10, 20], 25)
+            [1, 15, 30], 30)
     numbers.to_excel(
             writer, chr(65+i)+'.3 Top enrichments',
             index=False)

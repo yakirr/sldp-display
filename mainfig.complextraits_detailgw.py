@@ -48,7 +48,7 @@ manhattan_ncols = int(1.5*ahat_Rv_plot_ncols)
 enrichment_ncols = 30
 
 # set up figure
-height_in=4
+height_in=(2/3)*4
 width_in=ncols/(ahat_Rv_plot_ncols*nrows)*height_in
 print('width =', width_in)
 fig = plt.figure(figsize=(width_in,height_in))
