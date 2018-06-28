@@ -36,7 +36,6 @@ highlightedtfs = [
 highlightedtissues = [
         'Pancreas',
         'GI (liver)',
-        'GI (stomach)',
         'Lymphocytes',
         'Spleen',
         'Fibroblasts',
